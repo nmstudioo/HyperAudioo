@@ -58,8 +58,8 @@ prevReleaseMs = releaseMs;
 // Input validation also catches NaN and infinities.
 xL = spl0;
 xR = spl1;
-!(abs(xL) < 1000000) ? xL = 0;
-!(abs(xR) < 1000000) ? xR = 0;
+abs(xL) < 1e6 ? 0 : (xL = 0.0);
+abs(xR) < 1e6 ? 0 : (xR = 0.0);
 
 master == 0 ? (
   // True bypass: no gain, delay, limiter, or output clamp.
@@ -104,8 +104,8 @@ master == 0 ? (
   // Unity gain by default; optional user gain is in 0.1 dB steps.
   pL = xL * preGain;
   pR = xR * preGain;
-  !(abs(pL) < 1000000) ? pL = 0;
-  !(abs(pR) < 1000000) ? pR = 0;
+  abs(pL) < 1e6 ? 0 : (pL = 0.0);
+  abs(pR) < 1e6 ? 0 : (pR = 0.0);
 
   // Linked instantaneous gain request.
   pk = max(abs(pL), abs(pR));
@@ -160,8 +160,8 @@ master == 0 ? (
   );
 
   // Final numerical guard and sample-peak ceiling.
-  !(abs(outL) < 1000000) ? outL = 0;
-  !(abs(outR) < 1000000) ? outR = 0;
+  abs(outL) < 1e6 ? 0 : (outL = 0.0);
+  abs(outR) < 1e6 ? 0 : (outR = 0.0);
   spl0 = min(max(outL, -ceiling), ceiling);
   spl1 = min(max(outR, -ceiling), ceiling);
 );
