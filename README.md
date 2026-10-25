@@ -1,64 +1,51 @@
-# HyperAudio DSP by Noushad M.
+<div align="center">
 
-DSP correction chains for two specific playback systems, built for
-[RootlessJamesDSP](https://github.com/ThePBone/RootlessJamesDSP). Each chain
-is a matched pair of correction files (VDC or IRS) plus a residual limiter.
+<img src="https://nmstudioo.github.io/HyperAudioo/assets/banner.svg" alt="HyperAudio" width="100%">
 
-Not a general-purpose EQ preset collection. These are corrections designed
-against specific devices, with the numerical work to back the claims.
+<br>
+
+**Measurement-driven DSP correction chains for two specific playback systems.**
+Built for [RootlessJamesDSP](https://github.com/ThePBone/RootlessJamesDSP).
+
+![State](https://img.shields.io/badge/state-experimental-2fd6ff?style=flat-square)
+![Platform](https://img.shields.io/badge/platform-RootlessJamesDSP-6d8dff?style=flat-square)
+![Rate](https://img.shields.io/badge/host%20rate-48%20kHz-8a6bff?style=flat-square)
+![Code](https://img.shields.io/badge/code-MIT-lightgrey?style=flat-square)
+![Audio](https://img.shields.io/badge/audio-CC%20BY--SA%204.0-lightgrey?style=flat-square)
+
+[Devices](#devices) · [Architecture](#architecture) · [Repository Structure](#repository-structure) · [Quick start](#quick-start) · [Validation](#validation-state) · [Limitations](#known-limitations)
+
+</div>
+
+---
+
+## Overview
+
+Each chain is a matched set: an identity **VDC**, a minimum-phase **IRS** that carries the correction, and an **EEL** script for limiting and optional effects.
+
+This is **not** a preset collection. Every claim in this repository carries an evidence label, and unverified items are marked as such. See [`docs/methodology.md`](docs/methodology.md).
 
 ## Devices
 
-| Device | Chain | Status |
-|---|---|---|
-| Redmi 12 speaker (MediaTek Helio G88, Android 15) | `redmi_12/` | Complete, frozen |
-| KZ EDX Pro IEM (24 Ω, 112 dB/mW) | `edx_pro/` | VDC frozen; IRS numerically qualified; EEL in progress |
+| | Device | Chain | IRS | State |
+|---|---|---|---|---|
+| 🔊 | **Redmi 12** speaker | [`Redmi_12/`](Redmi_12/) | 8192 taps · 48 kHz | Experimental |
+| 🎧 | **KZ EDX Pro** IEM (24 Ω, 112 dB/mW) | [`edx_pro/`](edx_pro/) | 2048 taps · 48 kHz | Experimental |
 
 ## Architecture
 
-```
-Source audio
-    │
-    ├── VDC path      10-biquad IIR correction (48 kHz and 44.1 kHz banks)
-    │
-    └── IRS path      2048-tap minimum-phase FIR, equivalent to VDC
-    │
-    └── EEL           Residual limiter (no tonal correction)
-    │
-Output
+```mermaid
+flowchart LR
+    A[Source] --> B["VDC<br/>identity"]
+    B --> C["IRS<br/>min-phase FIR<br/>all tonal correction"]
+    C --> D["EEL2<br/>limiter · bypass · effects"]
+    D --> E[Output]
 ```
 
-**VDC and IRS are alternative implementations of the same correction.**
-Use one or the other, never both. The two paths are equivalent to within
-3 × 10⁻⁶ dB across 8,459 frequency points (measured), so stacking them
-double-corrects the signal.
+> [!IMPORTANT]
+> Tonal correction lives **only in the IRS**. Never load the same EQ in both the VDC and the convolver, because it applies twice.
 
-The EEL stage is purely operational — sample-peak limiting, input gain
-matching, click-free bypass. It does **not** apply EQ, compression, or
-tone shaping, because the residual between the VDC and IRS is numerically
-zero.
-
-## Key engineering findings
-
-1. **The IRS reproduces the VDC's transfer function to 3 × 10⁻⁶ dB**
-   (Float32, 8,459-point grid: DC, 128 linear points 0.1–20 Hz, 8192 log
-   points 20 Hz–20 kHz, 128 linear points 20 kHz–Nyquist, 9 filter centers,
-   Nyquist). RMS error 1 × 10⁻⁶ dB. This is measured against the actual
-   written file, not the synthesis intermediate.
-
-2. **The VDC is minimum-phase over 20 Hz – 20 kHz.** Phase error between
-   the IIR and the minimum-phase FIR is 0.0000 rad across 8192 log-grid
-   points; group-delay error is 0.0004 samples maximum. If the VDC had
-   mixed-phase behavior (e.g. shelf cuts pushing zeros outside the unit
-   circle), these numbers would be large even at perfect magnitude match.
-   They are not.
-
-3. **Consequence:** the IIR-vs-FIR A/B on a level-matched pair cannot
-   produce an audible phase difference. Any residual difference on device
-   traces to the convolver pipeline (FFT partitioning, resampling, denormal
-   handling), not to the filter itself.
-
-## Repository structure
+## Repository Structure
 
 ```
 hyperaudioo/
@@ -69,19 +56,19 @@ hyperaudioo/
 ├── README.md                 This file
 ├── index.html                Interactive A/B test harness (see docs)
 │
-├── redmi_12/
-│   ├── HA_S_Master.eel               Post-IRS transparent limiter
-│   ├── HA_S_Master.irs               8192-tap FIR correction
-│   ├── HA_S_Master.vdc               Identity DDC (no correction)
-│   ├── Setting_Guide_S.txt           On-device setup instructions
-│   └── report_Redmi_12.txt           Numerical report
+├── Redmi_12/
+│   ├── - HA™ S Master.eel               Post-IRS transparent limiter
+│   ├── - HA™ S Master.irs               8192-tap FIR correction
+│   ├── - HA™ S Master.vdc               Identity DDC (no correction)
+│   ├── Setting_Guide_S.md               On-device setup instructions
+│   └── report_Redmi_12.md               Numerical report
 │
 ├── edx_pro/
-│   ├── HA_IEM_v3.eel                 Residual limiter (v1, in progress)
-│   ├── HA_IEM_v3.irs                 2048-tap minimum-phase FIR correction
-│   ├── HA_IEM_v3.vdc                 Dual-rate VDC correction
-│   ├── Setting_Guide_IEM.txt         On-device setup instructions
-│   └── report_EDX_HA.txt             Numerical report
+│   ├── - HA IEM v3.irs                 2048-tap minimum-phase FIR correction
+│   ├── - HA IEM v3.eel                 Limiter, bypass and effects (EEL2)
+│   ├── - HA IEM v3.vdc                 Identity DDC (no correction)
+│   ├── Setting_Guide_IEM.md            On-device setup instructions
+│   └── report_EDX_HA.md                Numerical report
 │
 ├── docs/
 │   ├── methodology.md                Synthesis, gating, validation method
@@ -94,122 +81,107 @@ hyperaudioo/
     ├── IEM_AB_Harness.webp           IEM AB Harness Report
     ├── script.js                     Core JavaScript
     └── style.css                     Core Style CSS
-    
-              
 ```
 
-## How to use
+## Quick start
 
-### RootlessJamesDSP setup
+1. **Host rate 48 kHz.** Both IRS files are 48 kHz only. Verify the *running* rate in Rootless.
+2. **Disable** every other EQ, bass boost and OEM sound effect.
+3. **Load in this order:** DDC (`.vdc`) → Convolver (`.irs`, preamp **0 dB**) → Liveprog (`.eel`).
+4. **Start at low volume.**
 
-1. **Host rate: 48 kHz.** The EDX Pro IRS is 48 kHz only. Verify the
-   actual running rate in Rootless's settings, not just the configured
-   rate — Android can negotiate different rates on different outputs.
+<table>
+<tr>
+<td width="50%" valign="top">
 
-2. **Choose one correction path**:
-   - **VDC path** — load `EDX_HA_Warm.vdc` as DDC. Bypass the convolver.
-   - **IRS path** — load `EDX_HA_Warm_48k.irs` in the convolver. Bypass DDC.
-     Set the convolver's preamp to **0 dB** — the −2.7 dB preamp is baked
-     into the FIR.
+### 🔊 Redmi 12
+`Redmi_12/`
+- `- HA™ S Master.vdc`
+- `- HA™ S Master.irs`
+- `- HA™ S Master.eel`
 
-3. **EEL** — load `EDX_HA_Core_v1.eel` as a separate module if you want
-   peak protection. Default is −1.5 dBFS ceiling, 0 dB input gain. This
-   is a sample-peak limiter, not a hearing-safety device.
+[Setting guide](Redmi_12/Setting_Guide_S.md) · [Report](Redmi_12/report_Redmi_12.md)
 
-4. **Disable any other EQ, bass boost, or system audio processing**
-   (Android sound settings, OEM audio apps) before A/B testing.
+</td>
+<td width="50%" valign="top">
 
-### Redmi 12
+### 🎧 KZ EDX Pro
+`edx_pro/`
+- `- HA IEM v3.vdc`
+- `- HA IEM v3.irs`
+- `- HA IEM v3.eel`
 
-The three files in `redmi_12/` are used together (VDC + IRS + EEL).
-Unlike the EDX Pro chain, they are designed to stack:
+[Setting guide](edx_pro/Setting_Guide_IEM.md) · [Report](edx_pro/report_EDX_HA.md)
 
-- `Speaker_HA_v6.vdc` — identity DDC (placeholder; does no correction)
-- `Speaker_HA_48k_v6.irs` — the actual correction
-- `HyperAudio_V6_IRS_Core_v2.eel` — post-IRS transparent limiter
+</td>
+</tr>
+</table>
+
+## A/B harness
+
+Level-matched blind comparison. Open [`index.html`](index.html) or the hosted page: **https://nmstudioo.github.io/HyperAudioo**
+
+<p align="center">
+  <img src="https://nmstudioo.github.io/HyperAudioo/assets/Speaker_AB_Harness.webp" alt="Speaker A/B harness" width="49%">
+  <img src="https://nmstudioo.github.io/HyperAudioo/assets/IEM_AB_Harness.webp" alt="IEM A/B harness" width="49%">
+</p>
 
 ## Validation state
 
-Honest accounting of what has and has not been verified:
+| Component | Offline checks | App / device | Listening |
+|---|:-:|:-:|:-:|
+| Speaker IRS | ✅ PASS | ⛔ NOT RUN | ⛔ NOT RUN |
+| Speaker EEL | ✅ compile · ⚠️ NaN guard FAIL (x86) | ⛔ NOT RUN | ⛔ NOT RUN |
+| Speaker VDC | ✅ identity | 🟡 USER REPORTED | — |
+| IEM IRS | ✅ PASS | ⛔ NOT RUN | ⛔ NOT RUN |
+| IEM EEL | ✅ PASS | ⛔ NOT RUN | ⛔ NOT RUN |
+| IEM VDC | ✅ identity | — | — |
 
-| Component | Numerical | Device listening | SHA frozen |
-|---|---|---|---|
-| Redmi 12 VDC | — | Yes | Yes |
-| Redmi 12 IRS | — | Yes | Yes |
-| Redmi 12 EEL | — | Yes | Yes |
-| EDX Pro VDC (48 kHz) | Coefficient audit | Yes | Yes |
-| EDX Pro VDC (44.1 kHz) | Not independently audited | No | Yes |
-| EDX Pro IRS | Yes (3e-6 dB, all gates) | **No** | Yes |
-| EDX Pro EEL v1 | In progress | No | No |
+*Numerically qualified* never implies device testing or listening. Details: [`docs/test_report.md`](docs/test_report.md).
 
-"Numerically qualified" means the file has been verified against a
-reference within a defined tolerance. It does **not** mean the file has
-been tested on device, and it does **not** mean a subjective comparison
-has been done.
+## Integrity
 
-## Building from source
-
-### IRS generator
-
-```bash
-cd edx_pro/
-python3 generate_irs.py
-```
-
-Requires `EDX_HA_Warm.vdc` in the same directory. In measurement mode
-(`MAG_TOL_DB=None`), the generator writes the `.irs` and a numerical
-report if all structural gates pass, but does not apply a magnitude
-acceptance threshold. Set `MAG_TOL_DB = 0.001` to require the magnitude
-gate.
-
-### EEL2 scripts
-
-No build step. Load `.eel` files directly in RootlessJamesDSP. EEL2 is
-interpreted at runtime by the James34602 VM.
-
-## SHA-256 manifest
+Verify downloads with `sha256sum`.
 
 ```
-edx_pro/EDX_HA_Warm.vdc
-    a144b7b54d3c15e91372abb1302556200e0124d4c486d990532d845544fcab4f
+Redmi_12/- HA™ S Master.vdc
+    933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef
+Redmi_12/- HA™ S Master.irs
+    46519e592cc229baabd37b58c04e60c02da47bf261f9b1566b8808b19127105f
+Redmi_12/- HA™ S Master.eel
+    4def69dbbe702d4784dd629f5038c0136e4368f62be8e87d555c6fb39892fe14
 
-edx_pro/EDX_HA_Warm_48k.irs
-    ee242fdc83194064382668cc7575121b3275a952f60045cafb411d074d73070b
+edx_pro/- HA IEM v3.vdc
+    933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef
+edx_pro/- HA IEM v3.irs
+    b6d751a1613b48569a6ec485f477603172dcc14b0072f0c86c93b4668363b9d5
+edx_pro/- HA IEM v3.eel   (limiter-only v3 script)
+    f48ee0183045cbc067a6d2308334e9365b5262c2961ca78cbc40512dc6e7e894
+edx_pro/- HA IEM v3.eel   (if shipping the v4 script with effects)
+    92cadeaedcfba89df109ff1d113bd1d1b80c8b0493c6e0f7908fb0b9c41dc361
 ```
-
-Verify against downloaded files with `sha256sum`.
 
 ## Known limitations
 
-- **EDX Pro IRS has not been device-tested.** The numerical match to the
-  VDC is exceptionally tight, but convolver implementation, FFT partitioning,
-  resampling, gain handling, and latency on device are unverified.
-- **EDX Pro IRS is 48 kHz only.** At any other host rate the filter is
-  wrong (stretched or shortened).
-- **EDX Pro EEL bypass is delayed by 1 ms** (48 samples at 48 kHz). Both
-  paths share the same delay so the crossfade is comb-free, but null tests
-  must delay-compensate.
-- **The "fast decay" question is unresolved.** The VDC impulse response
-  decays faster than a naive pole-radius calculation predicts (0.0002%
-  residual energy at tap 256 vs. ~0.04% predicted). The FIR matches the
-  VDC's actual behavior regardless, but the discrepancy has not been
-  explained.
+- **Speaker data provenance is unknown.** If a mic's response is inside the measurement, it is inside the filter.
+- **IEM voicing has no measurement behind it.** It is a labelled design choice.
+- **Not Dolby.** The IEM surround is crossfeed plus width, not HRTF virtualisation.
+- **Speaker EEL NaN guard** can latch on the x86 test VM; ARM unknown.
+- **Sample-peak limiting** is not true-peak or excursion protection.
+- **48 kHz only.** At any other rate the IRS is stretched or shortened.
 
 ## License
 
-Split licensing:
-
-- **Code** (`.py`, `.eel`) — [MIT](LICENSE-MIT)
-- **Audio artifacts** (`.irs`, `.vdc`, reports) — [CC BY-SA 4.0](LICENSE-CC-BY-SA-4.0)
-
-In short: use the scripts however you want, keep the derived correction
-files open if you redistribute them.
+| Scope | License |
+|---|---|
+| Code (`.eel`) | [MIT](LICENSE-MIT) |
+| Audio artifacts (`.irs`, `.vdc`, reports) | [CC BY-SA 4.0](LICENSE-CC-BY-SA-4.0) |
 
 ## Credits
 
-See [ATTRIBUTION.md](ATTRIBUTION.md) for required third-party notices.
-Designs are derived from AutoEq-format presets (jaakkopasanen/AutoEq, MIT)
-sourced from RikudouGoku's measurement database, with corroboration from
-Speaker Ranking's aggregate presets. EEL2 scripts target the VM in
-RootlessJamesDSP (ThePBone/RootlessJamesDSP, Apache 2.0). No third-party
-code or raw measurements are redistributed here.
+See [`ATTRIBUTION.md`](ATTRIBUTION.md). Presets derive from AutoEq-format data (jaakkopasanen/AutoEq, MIT) via RikudouGoku's database, corroborated by Speaker Ranking. EEL2 scripts target the VM in RootlessJamesDSP (ThePBone, Apache 2.0). No third-party code or raw measurements are redistributed.
+
+<div align="center">
+<br>
+<img src="https://nmstudioo.github.io/HyperAudioo/assets/logo.svg" alt="HyperAudio" width="72">
+</div>
