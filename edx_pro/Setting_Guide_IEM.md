@@ -1,6 +1,6 @@
 # Setting Guide · KZ EDX Pro (IEM)
 
-> **Chain:** identity DDC → 2048-tap IRS → limiter, clarity and space EEL (v4).
+> **Chain:** identity DDC → 2048-tap IRS → selectable EEL processing (v5; Effects is default).
 
 ## 1 · Load order
 
@@ -8,7 +8,7 @@
 |:-:|---|---|---|
 | 1 | DDC | `HA_IEM_v3.vdc` | Identity, dual-rate (44.1 and 48 kHz banks). No correction. |
 | 2 | Convolver | `HA_IEM_v3.irs` | 2048-frame minimum-phase FIR, 48 kHz, float32, stereo. The correction. |
-| 3 | Liveprog | `HA_IEM_v3.eel` | De-esser, Surround 3D, Space Width, then the look-ahead limiter. |
+| 3 | Liveprog | `HA_IEM_v3.eel` | Effects (default) or limiter-only, followed by the look-ahead limiter. |
 
 Load the correction **once**, in the convolver. The DDC is an identity, so there is no second EQ to double it.
 
@@ -21,9 +21,11 @@ Load the correction **once**, in the convolver. The DDC is an identity, so there
 
 ## 3 · EEL controls
 
+**Processing mode** selects the signal path. `Effects` (default) runs De-esser, Surround 3D and Space Width before the limiter. `Limiter only` bypasses all three effect blocks while retaining input gain, look-ahead limiting and the normal 48-sample latency. Switching paths clears effect memories to avoid stale state when returning to Effects.
+
 | Control | Default | Range | Notes |
 |---|:-:|:-:|---|
-| Master | `On` | Off / On | |
+| Master | `On` | Off / On | |\n| Processing mode | `Effects` | Effects / Limiter only | Effects is the default; Limiter only skips all three effect blocks. |
 | Limiter mode | `Default` | Default · Safe · Transparent · Customize · Full bypass | Full bypass disables the entire processing path |
 | Custom ceiling tenths dBFS | `-15` | −600 … 0 | Used by Customize |
 | Custom release ms | `80` | 10 … 500 | Used by Customize |
@@ -47,7 +49,7 @@ Load the correction **once**, in the convolver. The DDC is an identity, so there
 2. Sibilant → lower Deesser Threshold toward `-250`. Cymbals dull → raise it toward `-150`, or lower the amount.
 3. More depth → Surround 3D toward `60`. If vocals or bass feel odd → `0`.
 4. Space Width above `40` can sound unnatural on wide recordings.
-5. Every effect at `0` is bit-exact bypass of that block. `Full bypass` (or Master Off) bypasses the entire EEL processing chain, including input gain, effects and limiter; it is not a limiter-only switch.
+5. Every effect at `0` is intended to be a transparent bypass of that block. `Limiter only` skips effects but retains input gain and limiting. `Full bypass` (or Master Off) bypasses the entire EEL processing chain, including input gain and limiter.
 
 ## 5 · Notes
 
