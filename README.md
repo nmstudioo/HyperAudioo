@@ -39,7 +39,7 @@ This is **not** a preset collection. Every claim in this repository carries an e
 flowchart LR
     A[Source] --> B["VDC<br/>identity"]
     B --> C["IRS<br/>min-phase FIR<br/>all tonal correction"]
-    C --> D["EEL2<br/>limiter · bypass · selectable effects"]
+    C --> D["EEL2<br/>Effects (default) / Limiter only"]
     D --> E[Output]
 ```
 
