@@ -39,7 +39,9 @@ Group delay is large near 200 Hz (−27.7 samples), inherited from v2's steep 16
 | Hot input, max settings | peak held at 0.8414 (−1.5 dBFS) | PASS |
 | NaN / inf / 1e9 input | zero non-finite output; recovers | PASS |
 
-The v5 script adds a processing-path selector: `Effects` (default) or `Limiter only`. Limiter only bypasses De-esser, Surround 3D and Space Width while retaining input gain and the sample-peak lookahead limiter. Switching paths clears effect memories. The selector change is source-reviewed only; it has not yet been run through the source-built VM or app.\n\nLimiter modes in the script: Default −1.5 dBFS / 80 ms, Safe −2.0 / 120, Transparent −1.0 / 200, Customize, Full bypass. `Full bypass` (and Master Off) selects the delayed raw-input path and bypasses the entire processing chain, not only the limiter. The Default ceiling (0.8414) was the one tested.
+The v5 script adds a processing-path selector: `Effects` (default) or `Limiter only`. Limiter only bypasses De-esser, Surround 3D and Space Width while retaining input gain and the sample-peak lookahead limiter. Switching paths clears effect memories. The selector change is source-reviewed only; it has not yet been run through the source-built VM or app.
+
+Limiter modes in the script: Default −1.5 dBFS / 80 ms, Safe −2.0 / 120, Transparent −1.0 / 200, Customize, Full bypass. `Full bypass` (and Master Off) selects the delayed raw-input path and bypasses the entire processing chain, not only the limiter. The Default ceiling (0.8414) was the one tested.
 
 A first crossfeed dipped mono content 4.7 dB near 1 kHz; it was rebuilt as a delayed low-passed side cut.
 
