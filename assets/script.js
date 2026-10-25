@@ -2,7 +2,7 @@
 'use strict';
 
 /* == Constants == */
-const FS=48000,FN=65536,L1MAX=1.25,PI=Math.PI,db=x=>20*Math.log10(Math.max(1e-30,x));
+const FS=48000,FN=65536,L1MAX=1.25,TIMEOUT=12e3,PI=Math.PI,db=x=>20*Math.log10(Math.max(1e-30,x));
 
 /* == Analysis == */
 function fft(re,im){
@@ -121,14 +121,24 @@ const cache={};
 
 /* == Loading == */
 const load=p=>cache[p.k]||(cache[p.k]=(async()=>{
-const get=async(u,t)=>{
-const r=await fetch(u);
+const once=async(u,t)=>{
+const c=new AbortController(),id=setTimeout(()=>c.abort(),TIMEOUT);
+try{
+const r=await fetch(u,{signal:c.signal});
 if(!r.ok)throw Error(`${u} → HTTP ${r.status}`);
-return r[t]();
-};
+return await r[t]();
+}catch(e){
+throw e.name=='AbortError'?Error(`${u} → timed out`):e;
+}finally{
+clearTimeout(id);
+}
+},get=(u,t)=>once(u,t).catch(e=>/HTTP 4\d\d/.test(e.message)?Promise.reject(e):once(u,t));
 const[i,v,e]=await Promise.all([get(p.irs,'arrayBuffer'),get(p.vdc,'text'),get(p.eel,'text')]);
 return analyse(i,v,e);
-})().catch(e=>({err:e.message,pass:false})));
+})().catch(e=>{
+delete cache[p.k];
+return{err:e.message+(navigator.onLine?'':' (offline)'),pass:false};
+}));
 
 /* == Helpers == */
 const spark=(p,a)=>{
@@ -329,12 +339,16 @@ toast(all?'All checks pass':'Some checks failed',!all);
 }
 
 /* == Init == */
-Object.values(PROF).forEach(p=>load(p).then(a=>{
+const idle=window.requestIdleCallback||(f=>setTimeout(f,200));
+Object.values(PROF).forEach(p=>{
+const go=()=>load(p).then(a=>{
 if(!a.err)spark(p,a);
-}));
+});
+p.k==cur?go():idle(go);
+});
 $('#profiles').addEventListener('click',e=>{
 const b=e.target.closest('.prow');
-if(b&&b.dataset.k!=cur){
+if(b&&(b.dataset.k!=cur||!cache[cur])){
 cur=b.dataset.k;
 render();
 }
@@ -350,11 +364,22 @@ const t=document.documentElement.dataset.theme=='dark'?'light':'dark';
 document.documentElement.dataset.theme=t;
 try{localStorage.theme=t}catch{}
 };
+matchMedia('(prefers-color-scheme:light)').addEventListener('change',e=>{
+let s;
+try{s=localStorage.theme}catch{}
+if(!s)document.documentElement.dataset.theme=e.matches?'light':'dark';
+});
 const ch=$('#chart');
+let pm=0;
 ch.addEventListener('pointermove',e=>{
+if(!cs||pm)return;
+const cx=e.clientX;
+pm=requestAnimationFrame(()=>{
+pm=0;
 if(!cs)return;
-const r=$('#chartSvg').getBoundingClientRect(),x=(e.clientX-r.left)*cs.W/r.width;
+const r=$('#chartSvg').getBoundingClientRect(),x=(cx-r.left)*cs.W/r.width;
 tip(20*1000**Math.max(0,Math.min(1,(x-cs.m.l)/(cs.W-cs.m.l-cs.m.r))));
+});
 });
 ch.addEventListener('pointerleave',hideTip);
 ch.addEventListener('blur',hideTip);
@@ -364,8 +389,11 @@ if(e.key!='ArrowLeft'&&e.key!='ArrowRight')return;
 e.preventDefault();
 tip(Math.min(2e4,Math.max(20,(ch._f||1e3)*2**(e.key=='ArrowLeft'?-.15:.15))));
 });
-let rz=0;
-new ResizeObserver(()=>{
+let rz=0,rw=0;
+new ResizeObserver(([e])=>{
+const w=Math.round(e.contentRect.width);
+if(w==rw)return;
+rw=w;
 cancelAnimationFrame(rz);
 rz=requestAnimationFrame(()=>load(PROF[cur]).then(a=>{
 if(a.err||a.n)drawChart(a);
