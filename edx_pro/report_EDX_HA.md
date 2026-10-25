@@ -1,6 +1,6 @@
 # Report · KZ EDX Pro IEM Chain
 
-**Files:** as in this repository: identity VDC, v3 IRS, v4 EEL. Hashes in the README match the files tested here.
+**Files:** as in this repository: identity VDC, v3 IRS, v5 EEL. Hashes in the README identify the current files; the new processing-mode selector has not yet been runtime-tested.
 **State:** offline checks only. No coupler measurement or listening evidence exists in this project. Device use by the author is `USER REPORTED` in the repository's own notes and was not reproduced here.
 
 ## Findings that shaped v3
@@ -27,7 +27,7 @@ Built from the exact magnitude of the v2 IRS (the user's own corrections kept), 
 
 Group delay is large near 200 Hz (−27.7 samples), inherited from v2's steep 160–500 Hz slope.
 
-## v4 EEL: effects
+## EEL effects path (carried forward in v5)
 
 | Block | Result | Status |
 |---|---|:-:|
@@ -39,7 +39,7 @@ Group delay is large near 200 Hz (−27.7 samples), inherited from v2's steep 16
 | Hot input, max settings | peak held at 0.8414 (−1.5 dBFS) | PASS |
 | NaN / inf / 1e9 input | zero non-finite output; recovers | PASS |
 
-Limiter modes in the v4 script: Default −1.5 dBFS / 80 ms, Safe −2.0 / 120, Transparent −1.0 / 200, Customize, Full bypass. `Full bypass` (and Master Off) selects the delayed raw-input path and bypasses the entire processing chain, not only the limiter. The Default ceiling (0.8414) was the one tested.
+The v5 script adds a processing-path selector: `Effects` (default) or `Limiter only`. Limiter only bypasses De-esser, Surround 3D and Space Width while retaining input gain and the sample-peak lookahead limiter. Switching paths clears effect memories. The selector change is source-reviewed only; it has not yet been run through the source-built VM or app.\n\nLimiter modes in the script: Default −1.5 dBFS / 80 ms, Safe −2.0 / 120, Transparent −1.0 / 200, Customize, Full bypass. `Full bypass` (and Master Off) selects the delayed raw-input path and bypasses the entire processing chain, not only the limiter. The Default ceiling (0.8414) was the one tested.
 
 A first crossfeed dipped mono content 4.7 dB near 1 kHz; it was rebuilt as a delayed low-passed side cut.
 
