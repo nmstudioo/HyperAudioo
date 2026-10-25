@@ -6,9 +6,9 @@
 
 | Order | Module | File | Role |
 |:-:|---|---|---|
-| 1 | DDC | `- HA™ S Master.vdc` | Identity (10 pass-through sections, 44.1 kHz and 48 kHz banks). No correction. |
-| 2 | Convolver | `- HA™ S Master.irs` | 8192-frame minimum-phase FIR, 48 kHz, float32, stereo. The correction. |
-| 3 | Liveprog | `- HA™ S Master.eel` | Post-IRS linked look-ahead limiter. No EQ or tonal change. |
+| 1 | DDC | `HA_Speaker_Master.vdc` | Identity (10 pass-through sections, 44.1 kHz and 48 kHz banks). No correction. |
+| 2 | Convolver | `HA_Speaker_Master.irs` | 8192-frame minimum-phase FIR, 48 kHz, float32, stereo. The correction. |
+| 3 | Liveprog | `HA_Speaker_Master.eel` | Post-IRS linked look-ahead limiter. No EQ or tonal change. |
 
 All three are used together. Unlike the EDX Pro chain, they are meant to stack: the VDC does nothing, so nothing is doubled.
 
