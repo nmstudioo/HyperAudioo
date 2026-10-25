@@ -7,7 +7,8 @@
 **Measurement-driven DSP correction chains for two specific playback systems.**
 Built for [RootlessJamesDSP](https://github.com/ThePBone/RootlessJamesDSP).
 
-![State](https://img.shields.io/badge/state-experimental-2fd6ff?style=flat-square)
+![Speaker](https://img.shields.io/badge/speaker-V6%20frozen-2fd6ff?style=flat-square)
+![IEM](https://img.shields.io/badge/IEM-v3%20%2B%20v4%20EEL-8a6bff?style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-RootlessJamesDSP-6d8dff?style=flat-square)
 ![Rate](https://img.shields.io/badge/host%20rate-48%20kHz-8a6bff?style=flat-square)
 ![Code](https://img.shields.io/badge/code-MIT-lightgrey?style=flat-square)
@@ -29,8 +30,8 @@ This is **not** a preset collection. Every claim in this repository carries an e
 
 | | Device | Chain | IRS | State |
 |---|---|---|---|---|
-| 🔊 | **Redmi 12** speaker | [`Redmi_12/`](Redmi_12/) | 8192 taps · 48 kHz | Experimental |
-| 🎧 | **KZ EDX Pro** IEM (24 Ω, 112 dB/mW) | [`edx_pro/`](edx_pro/) | 2048 taps · 48 kHz | Experimental |
+| 🔊 | **Redmi 12** speaker | [`Redmi_12/`](Redmi_12/) | 8192 taps · 48 kHz | V6 · frozen |
+| 🎧 | **KZ EDX Pro** IEM (24 Ω, 112 dB/mW) | [`edx_pro/`](edx_pro/) | 2048 taps · 48 kHz | v3 IRS · v4 EEL |
 
 ## Architecture
 
@@ -130,14 +131,14 @@ Level-matched blind comparison. Open [`index.html`](index.html) or the hosted pa
 
 | Component | Offline checks | App / device | Listening |
 |---|:-:|:-:|:-:|
-| Speaker IRS | ✅ PASS | ⛔ NOT RUN | ⛔ NOT RUN |
-| Speaker EEL | ✅ compile · ⚠️ NaN guard FAIL (x86) | ⛔ NOT RUN | ⛔ NOT RUN |
-| Speaker VDC | ✅ identity | 🟡 USER REPORTED | — |
-| IEM IRS | ✅ PASS | ⛔ NOT RUN | ⛔ NOT RUN |
-| IEM EEL | ✅ PASS | ⛔ NOT RUN | ⛔ NOT RUN |
+| Speaker VDC | ✅ identity | 🟡 USER REPORTED | 🟡 USER REPORTED |
+| Speaker IRS | ✅ PASS | 🟡 USER REPORTED | 🟡 USER REPORTED |
+| Speaker EEL | ✅ PASS (compile, ceiling, bypass, non-finite) | 🟡 USER REPORTED | 🟡 USER REPORTED |
 | IEM VDC | ✅ identity | — | — |
+| IEM IRS | ✅ PASS | ⛔ NOT RUN | ⛔ NOT RUN |
+| IEM EEL v4 | ✅ PASS (effects, ceiling, bypass, non-finite) | ⛔ NOT RUN | ⛔ NOT RUN |
 
-*Numerically qualified* never implies device testing or listening. Details: [`docs/test_report.md`](docs/test_report.md).
+*Numerically qualified* never implies device testing or listening. Offline = source-built JamesDSP VM on x86_64, not ARM and not the app. Details: [`docs/test_report.md`](docs/test_report.md).
 
 ## Integrity
 
@@ -145,28 +146,26 @@ Verify downloads with `sha256sum`.
 
 ```
 Redmi_12/- HA™ S Master.vdc
-    933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef
+    953227f5aaafabb11694422e81a1968cc2515d7a5fa665a8e9ab2331df25618b
 Redmi_12/- HA™ S Master.irs
-    46519e592cc229baabd37b58c04e60c02da47bf261f9b1566b8808b19127105f
+    0ba8da0f4351aca761e3c7e39b37bccf9b61403f7d92ed60ecf1b23cda0c7de4
 Redmi_12/- HA™ S Master.eel
-    4def69dbbe702d4784dd629f5038c0136e4368f62be8e87d555c6fb39892fe14
+    dfcb7131bb4c1a9e8937e0ef1d86ac05137fb73d272b8e7826f8436d7f023ab7
 
 edx_pro/- HA IEM v3.vdc
     933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef
 edx_pro/- HA IEM v3.irs
     b6d751a1613b48569a6ec485f477603172dcc14b0072f0c86c93b4668363b9d5
-edx_pro/- HA IEM v3.eel   (limiter-only v3 script)
-    f48ee0183045cbc067a6d2308334e9365b5262c2961ca78cbc40512dc6e7e894
-edx_pro/- HA IEM v3.eel   (if shipping the v4 script with effects)
+edx_pro/- HA IEM v3.eel
     92cadeaedcfba89df109ff1d113bd1d1b80c8b0493c6e0f7908fb0b9c41dc361
 ```
 
 ## Known limitations
 
-- **Speaker data provenance is unknown.** If a mic's response is inside the measurement, it is inside the filter.
+- **Speaker IRS provenance:** the measurement setup is not documented here. If a mic's response was inside it, it is inside the filter.
 - **IEM voicing has no measurement behind it.** It is a labelled design choice.
 - **Not Dolby.** The IEM surround is crossfeed plus width, not HRTF virtualisation.
-- **Speaker EEL NaN guard** can latch on the x86 test VM; ARM unknown.
+- **ARM unverified.** All EEL tests ran on x86_64.
 - **Sample-peak limiting** is not true-peak or excursion protection.
 - **48 kHz only.** At any other rate the IRS is stretched or shortened.
 
