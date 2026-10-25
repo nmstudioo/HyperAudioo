@@ -7,9 +7,9 @@ Numbers below were computed from the files in this repo (SHA-256 in the README).
 
 | File | Verified content |
 |---|---|
-| `- HA™ S Master.vdc` | Identity: ten `1,0,0,0,0` sections in both the 44.1 kHz and 48 kHz banks |
-| `- HA™ S Master.irs` | RIFF float32 stereo, L = R, 48 kHz, 8192 frames, all finite |
-| `- HA™ S Master.eel` | "HyperAudio V6 IRS Core": linked look-ahead limiter, 48-sample delay |
+| `HA_Speaker_Master.vdc` | Identity: ten `1,0,0,0,0` sections in both the 44.1 kHz and 48 kHz banks |
+| `HA_Speaker_Master.irs` | RIFF float32 stereo, L = R, 48 kHz, 8192 frames, all finite |
+| `HA_Speaker_Master.eel` | "HyperAudio V6 IRS Core": linked look-ahead limiter, 48-sample delay |
 
 ## IRS (from the written file)
 
@@ -25,7 +25,7 @@ Magnitude (dB): 30 Hz −1.1 · 100 Hz −0.7 · 500 Hz −0.6 · 1 kHz −1.3 �
 
 ## Chain simulation
 
-Source-built JamesDSP VM (x86_64) + NumPy FIR. Defaults, ceiling −3 dBFS = 0.7079. **Not** the app's convolver.
+Source-built JamesDSP VM (x86_64) + NumPy FIR. Defaults, ceiling −3 dBFS = 0.7079. **Not** the app's convolver. The non-finite-input cases below are pending rerun after the speaker EEL guard correction.
 
 | Test | Pre-limiter peak | Output peak | Over ceiling | Status |
 |---|:-:|:-:|:-:|:-:|
@@ -36,8 +36,8 @@ Source-built JamesDSP VM (x86_64) + NumPy FIR. Defaults, ceiling −3 dBFS = 0.7
 | +FS step | 0.950 | 0.7079 | 0 | PASS |
 | Impulse (delay) | 0.950 | 0.7079 | 0 | PASS: peak at 148 = 100 + 48 |
 | Bypass (Processing = Bypass) | n/a | input | n/a | PASS: error 0 |
-| NaN input sample | n/a | no non-finite, recovers | n/a | PASS |
-| inf and 1e9 input samples | n/a | no non-finite, recovers | n/a | PASS |
+| NaN input sample | — | — | — | NOT RUN on corrected source |
+| inf and 1e9 input samples | — | — | — | NOT RUN on corrected source |
 
 ## Author-reported (not independently reproduced)
 
