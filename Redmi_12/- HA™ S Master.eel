@@ -1,0 +1,168 @@
+desc: HyperAudio V6 IRS Core
+//tags: hyperaudio v6-irs transparent linked-lookahead-limiter
+//author: HyperAudio
+// Post-IRS protection stage for Speaker HA 48k v6.irs.
+// No EQ, bass synthesis, high-pass filter, stereo widening, or tonal shaping.
+
+master:1<0,1,1{Bypass,Protect}>Processing
+inputGain10:0<-120,60,1>Input Gain tenths dB
+ceiling10:-30<-120,0,1>Peak Ceiling tenths dBFS
+releaseMs:80<20,300,1>Release ms
+
+@init
+// Explicit UI defaults. Fixed 48-sample lookahead at the 48 kHz target rate.
+master = 1;
+inputGain10 = 0;
+ceiling10 = -30;
+releaseMs = 80;
+
+fs = srate > 0 ? srate : 48000;
+LA = 48;
+N = LA + 1;
+
+// Block prefix/suffix minima and stereo delay storage.
+mem = 10000;
+buf_curr = mem;
+suf_min = buf_curr + N;
+dlyL = suf_min + N + 1;
+dlyR = dlyL + N;
+
+i = 0;
+loop(N + 1,
+  suf_min[i] = 1.0;
+  i += 1;
+);
+i = 0;
+loop(N,
+  buf_curr[i] = 1.0;
+  dlyL[i] = 0.0;
+  dlyR[i] = 0.0;
+  i += 1;
+);
+
+w = 0;
+curr_pref_min = 1.0;
+limGain = 1.0;
+ctl = 0;
+prevMaster = master;
+
+preGain = pow(10.0, inputGain10 / 200.0);
+ceiling = pow(10.0, ceiling10 / 200.0);
+releaseCoeff = 1.0 - exp(-1.0 / (fs * (releaseMs * 0.001)));
+
+prevInputGain10 = inputGain10;
+prevCeiling10 = ceiling10;
+prevReleaseMs = releaseMs;
+
+@sample
+// Input validation also catches NaN and infinities.
+xL = spl0;
+xR = spl1;
+!(abs(xL) < 1000000) ? xL = 0;
+!(abs(xR) < 1000000) ? xR = 0;
+
+master == 0 ? (
+  // True bypass: no gain, delay, limiter, or output clamp.
+  spl0 = xL;
+  spl1 = xR;
+) : (
+  // Clear stale delay/history when returning from true bypass.
+  prevMaster == 0 ? (
+    i = 0;
+    loop(N + 1,
+      suf_min[i] = 1.0;
+      i += 1;
+    );
+    i = 0;
+    loop(N,
+      buf_curr[i] = 1.0;
+      dlyL[i] = 0.0;
+      dlyR[i] = 0.0;
+      i += 1;
+    );
+    w = 0;
+    curr_pref_min = 1.0;
+    limGain = 1.0;
+  );
+
+  // Parameter updates.
+  inputGain10 != prevInputGain10 ? (
+    prevInputGain10 = inputGain10;
+    preGain = pow(10.0, inputGain10 / 200.0);
+  );
+  ceiling10 != prevCeiling10 ? (
+    prevCeiling10 = ceiling10;
+    ceiling = pow(10.0, ceiling10 / 200.0);
+    ceiling = min(max(ceiling, 0.001), 1.0);
+  );
+  releaseMs != prevReleaseMs ? (
+    prevReleaseMs = releaseMs;
+    rm = max(releaseMs, 20) * 0.001;
+    releaseCoeff = 1.0 - exp(-1.0 / (fs * rm));
+  );
+
+  // Unity gain by default; optional user gain is in 0.1 dB steps.
+  pL = xL * preGain;
+  pR = xR * preGain;
+  !(abs(pL) < 1000000) ? pL = 0;
+  !(abs(pR) < 1000000) ? pR = 0;
+
+  // Linked instantaneous gain request.
+  pk = max(abs(pL), abs(pR));
+  g_inst = pk > ceiling ? ceiling / pk : 1.0;
+  g_inst = min(max(g_inst, 0.0), 1.0);
+
+  // O(1) amortized minimum over the 49-sample lookahead window.
+  // suf_min[w+1] covers the preceding block's remaining suffix;
+  // curr_pref_min covers the current block from index 0 through w.
+  buf_curr[w] = g_inst;
+  curr_pref_min = min(curr_pref_min, g_inst);
+  reqG = min(suf_min[w + 1], curr_pref_min);
+
+  // Instant attack, exponential release.
+  reqG < limGain ? (
+    limGain = reqG;
+  ) : (
+    limGain += releaseCoeff * (reqG - limGain);
+  );
+  limGain = min(max(limGain, 0.0), 1.0);
+
+  // Read audio delayed by exactly 48 samples, then write current audio.
+  rd = w + 1;
+  rd >= N ? rd = 0;
+  outL = dlyL[rd] * limGain;
+  outR = dlyR[rd] * limGain;
+  dlyL[w] = pL;
+  dlyR[w] = pR;
+  w = rd;
+
+  // At each block boundary, prepare suffix minima for the block just filled.
+  w == 0 ? (
+    temp_min = buf_curr[N - 1];
+    suf_min[N - 1] = temp_min;
+    lp = N - 2;
+    while (lp >= 0) (
+      temp_min = min(buf_curr[lp], temp_min);
+      suf_min[lp] = temp_min;
+      lp -= 1;
+    );
+    suf_min[N] = 1.0;
+    curr_pref_min = 1.0;
+  );
+
+  // Periodic denormal cleanup.
+  ctl += 1;
+  ctl >= 1024 ? (
+    ctl = 0;
+    abs(limGain) < 1e-30 ? limGain = 1.0;
+    abs(dlyL[w]) < 1e-30 ? dlyL[w] = 0.0;
+    abs(dlyR[w]) < 1e-30 ? dlyR[w] = 0.0;
+  );
+
+  // Final numerical guard and sample-peak ceiling.
+  !(abs(outL) < 1000000) ? outL = 0;
+  !(abs(outR) < 1000000) ? outR = 0;
+  spl0 = min(max(outL, -ceiling), ceiling);
+  spl1 = min(max(outR, -ceiling), ceiling);
+);
+prevMaster = master;
