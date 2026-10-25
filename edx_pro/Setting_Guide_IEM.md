@@ -25,7 +25,8 @@ Load the correction **once**, in the convolver. The DDC is an identity, so there
 
 | Control | Default | Range | Notes |
 |---|:-:|:-:|---|
-| Master | `On` | Off / On | |\n| Processing mode | `Effects` | Effects / Limiter only | Effects is the default; Limiter only skips all three effect blocks. |
+| Master | `On` | Off / On | |
+| Processing mode | `Effects` | Effects / Limiter only | Effects is the default; Limiter only skips all three effect blocks. |
 | Limiter mode | `Default` | Default · Safe · Transparent · Customize · Full bypass | Full bypass disables the entire processing path |
 | Custom ceiling tenths dBFS | `-15` | −600 … 0 | Used by Customize |
 | Custom release ms | `80` | 10 … 500 | Used by Customize |
