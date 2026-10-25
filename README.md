@@ -22,7 +22,7 @@ Built for [RootlessJamesDSP](https://github.com/ThePBone/RootlessJamesDSP).
 
 ## Overview
 
-Each chain is a matched set: an identity **VDC**, a minimum-phase **IRS** that carries the correction, and an **EEL** script for limiting and optional effects.
+Each chain is a matched set: an identity **VDC**, a minimum-phase **IRS** that carries the correction, and an **EEL** script. The IEM EEL defaults to Effects, with a selectable Limiter only path.
 
 This is **not** a preset collection. Every claim in this repository carries an evidence label, and unverified items are marked as such. See [`docs/methodology.md`](docs/methodology.md).
 
@@ -158,7 +158,7 @@ edx_pro/HA_IEM_v3.vdc
 edx_pro/HA_IEM_v3.irs
     b6d751a1613b48569a6ec485f477603172dcc14b0072f0c86c93b4668363b9d5
 edx_pro/HA_IEM_v3.eel
-    97bf8d60ed1ab01c8047a4836c04af60953dcf9b650d527ceaf3a3ac95268d5d
+    3efa4976c3e9788faafa0225a9bcffa5944c04cb3d1bbfd5b64ce3a6d7d56b17
 ```
 
 ## Known limitations
