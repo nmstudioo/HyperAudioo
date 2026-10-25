@@ -9,7 +9,7 @@ Consolidated results and open questions. Environment: source-built JamesDSP VM (
 | Speaker IRS (V6) | peak 0.950, L1 1.2317, tail −82.9 dB, max gain −0.07 dB, format | all met | PASS |
 | Speaker chain | noise, sines, step, impulse | output pinned at ceiling 0.7079, never exceeded | PASS |
 | Speaker EEL | compile · bypass identity · delay 48 samples | OK | PASS |
-| Speaker EEL | NaN, inf and 1e9 input | no non-finite output, identical to clean afterwards | PASS |
+| Speaker EEL | NaN, inf and 1e9 input | pending rerun after guard correction | NOT RUN |
 | IEM IRS | gates | all met | PASS |
 | IEM chain | noise, sines, hot input at max effects | peak held 0.8414 | PASS |
 | IEM EEL v4 | effects-off identity · bypass identity | bit-exact | PASS |
@@ -20,8 +20,8 @@ Consolidated results and open questions. Environment: source-built JamesDSP VM (
 
 ## Corrections on record
 
-- An earlier validation of a *different* speaker script (a Stage 2B variant, not shipped here) latched on a single NaN. The repository's speaker EEL was re-tested and does **not** show that behaviour.
-- Every item above was re-run on the files in this repository, identified by SHA-256.
+- The speaker EEL's six non-finite guards were corrected in the repository. The speaker NaN / inf / 1e9 test is now explicitly marked `NOT RUN` until rerun against the corrected source.
+- Other listed results retain their previously recorded scope; this edit does not claim a new VM test run.
 - An early report cited the wrong upstream source revision; the relevant code was identical, and the pin was corrected.
 
 ## Open questions
