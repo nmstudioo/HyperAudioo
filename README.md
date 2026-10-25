@@ -136,7 +136,8 @@ Level-matched blind comparison. Open [`index.html`](index.html) or the hosted pa
 | Speaker EEL | 🟡 PASS (compile, ceiling, bypass); non-finite rerun pending | 🟡 USER REPORTED | 🟡 USER REPORTED |
 | IEM VDC | ✅ identity | — | — |
 | IEM IRS | ✅ PASS | ⛔ NOT RUN | ⛔ NOT RUN |
-| IEM EEL effects path | ✅ prior v4 checks (effects, ceiling, bypass, non-finite) | ⛔ NOT RUN | ⛔ NOT RUN |\n| IEM EEL v5 mode selector | 🟡 source review only; VM retest pending | ⛔ NOT RUN | ⛔ NOT RUN |
+| IEM EEL effects path | ✅ prior v4 checks (effects, ceiling, bypass, non-finite) | ⛔ NOT RUN | ⛔ NOT RUN |
+| IEM EEL v5 mode selector | 🟡 source review only; VM retest pending | ⛔ NOT RUN | ⛔ NOT RUN |
 
 *Numerically qualified* never implies device testing or listening. Offline = source-built JamesDSP VM on x86_64, not ARM and not the app. Details: [`docs/test_report.md`](docs/test_report.md).
 
@@ -160,7 +161,9 @@ edx_pro/HA_IEM_v3.eel
     97bf8d60ed1ab01c8047a4836c04af60953dcf9b650d527ceaf3a3ac95268d5d
 ```
 
-## Known limitations\n\n- **Reproducibility:** `iem_build.py` / `generate_irs.py` and complete source inputs are not included. The published IRS cannot be regenerated from this repository alone.
+## Known limitations
+
+- **Reproducibility:** `iem_build.py` / `generate_irs.py` and complete source inputs are not included. The published IRS cannot be regenerated from this repository alone.
 
 - **Speaker IRS provenance:** the measurement setup is not documented here. If a mic's response was inside it, it is inside the filter.
 - **IEM voicing has no measurement behind it.** It is a labelled design choice.
