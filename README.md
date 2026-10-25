@@ -62,26 +62,34 @@ zero.
 
 ```
 hyperaudio-dsp/
-├── LICENSE                   Points to the two license files
-├── LICENSE-MIT               Code (Python, EEL2)
-├── LICENSE-CC-BY-SA-4.0      Audio artifacts (.irs, .vdc, reports)
-├── ATTRIBUTION.md            AutoEq, Speaker Ranking, RootlessJamesDSP
-├── README.md                 This file
+├── LICENSE                   
+├── LICENSE-MIT               
+├── LICENSE-CC-BY-SA-4.0      
+├── ATTRIBUTION.md            
+├── README.md                 
+├── index.html                
+│
+├── Redmi_12/
+│   ├── HA™ S Master.eel
+│   ├── HA™ S Master.irs
+│   ├── HA™ S Master.vdc
+│   ├── Setting_Guide_S.txt
+│   └── report_Redmi_12.txt
 │
 ├── edx_pro/
-│   ├── EDX_HA_Warm.vdc               Dual-rate VDC (48 kHz + 44.1 kHz banks)
-│   ├── EDX_HA_Warm_48k.irs           IRS, 48 kHz, 2048 taps, stereo Float32
-│   ├── EDX_HA_Core_v1.eel            Residual limiter (in progress)
-│   ├── generate_irs.py               IRS generator from VDC
-│   └── report_EDX_HA_Warm.txt        Numerical report
+│   ├── HA IEM v3.irs
+│   ├── HA IEM v3.vdc
+│   ├── IEM HA v3.eel
+│   ├── Setting_Guide_IEM.txt
+│   └── report_EDX_HA.txt
 │
-├── redmi_12/
-│   ├── Speaker_HA_v6.vdc             Identity DDC (frozen)
-│   ├── Speaker_HA_48k_v6.irs         8192-tap FIR (frozen)
-│   └── HyperAudio_V6_IRS_Core_v2.eel Transparent post-IRS limiter (frozen)
+├── docs/
+│   ├── methodology.md
+│   └── test_report.md
 │
-└── docs/
-    └── methodology.md                Synthesis, gating, and validation method
+└── assets/
+    ├── script.js
+    └── style.css              
 ```
 
 ## How to use
