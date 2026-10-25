@@ -1,11 +1,10 @@
-desc: HyperAudio IEM Core v3 - Surround Deesser Limiter
+desc: HyperAudio IEM Core v4 - Surround Deesser Limiter
 //tags: hyperaudio iem edx surround crossfeed deesser limiter lookahead
 
 // ============================================================
 // DESIGN BASIS:
-//   H_residual = H_VDC / H_IRS
-//   max |H_residual - 1| = 3e-6 dB across 8459 points
-//   => No tonal correction here. Ever.
+//   The paired VDC is identity; the IRS carries the complete tonal correction.
+//   This EEL stage adds no static tonal EQ. Optional effects are separately controlled.
 //
 // v4 adds three optional blocks, each fully off at 0 (bit-exact bypass):
 //   1 Deesser: split-band dynamic cut around 6.5 kHz (EDX 5k and 8k trait)
@@ -21,7 +20,7 @@ desc: HyperAudio IEM Core v3 - Surround Deesser Limiter
 master:1<0,1,1{Off,On}>Master
 
 // LIMITER
-limMode:0<0,4,1{Default,Safe,Transparent,Customize,Off}>Limiter mode
+limMode:0<0,4,1{Default,Safe,Transparent,Customize,Full bypass}>Limiter mode
 customCeil10:-15<-600,0,1>Custom ceiling tenths dBFS
 customRelease:80<10,500,1>Custom release ms
 
