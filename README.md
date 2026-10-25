@@ -50,7 +50,7 @@ flowchart LR
 
 ```
 hyperaudioo/
-├── LICENSE                   Points to the two license files
+├── LICENSE                   Licensing summary and pointers
 ├── LICENSE-MIT               Code (EEL2)
 ├── LICENSE-CC-BY-SA-4.0      Audio artifacts (.irs, .vdc, reports)
 ├── ATTRIBUTION.md            AutoEq, Speaker Ranking, RootlessJamesDSP
@@ -133,7 +133,7 @@ Level-matched blind comparison. Open [`index.html`](index.html) or the hosted pa
 |---|:-:|:-:|:-:|
 | Speaker VDC | ✅ identity | 🟡 USER REPORTED | 🟡 USER REPORTED |
 | Speaker IRS | ✅ PASS | 🟡 USER REPORTED | 🟡 USER REPORTED |
-| Speaker EEL | ✅ PASS (compile, ceiling, bypass, non-finite) | 🟡 USER REPORTED | 🟡 USER REPORTED |
+| Speaker EEL | 🟡 PASS (compile, ceiling, bypass); non-finite rerun pending | 🟡 USER REPORTED | 🟡 USER REPORTED |
 | IEM VDC | ✅ identity | — | — |
 | IEM IRS | ✅ PASS | ⛔ NOT RUN | ⛔ NOT RUN |
 | IEM EEL v4 | ✅ PASS (effects, ceiling, bypass, non-finite) | ⛔ NOT RUN | ⛔ NOT RUN |
@@ -146,18 +146,18 @@ Verify downloads with `sha256sum`.
 
 ```
 Redmi_12/HA_Speaker_Master.vdc
-    953227f5aaafabb11694422e81a1968cc2515d7a5fa665a8e9ab2331df25618b
+    933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef
 Redmi_12/HA_Speaker_Master.irs
     0ba8da0f4351aca761e3c7e39b37bccf9b61403f7d92ed60ecf1b23cda0c7de4
 Redmi_12/HA_Speaker_Master.eel
-    dfcb7131bb4c1a9e8937e0ef1d86ac05137fb73d272b8e7826f8436d7f023ab7
+    e5cfbc49cb82aad8d3c45da5ca27715a9712639cb1f41aa3dce2a9677c903af4
 
 edx_pro/HA_IEM_v3.vdc
     933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef
 edx_pro/HA_IEM_v3.irs
     b6d751a1613b48569a6ec485f477603172dcc14b0072f0c86c93b4668363b9d5
 edx_pro/HA_IEM_v3.eel
-    92cadeaedcfba89df109ff1d113bd1d1b80c8b0493c6e0f7908fb0b9c41dc361
+    97bf8d60ed1ab01c8047a4836c04af60953dcf9b650d527ceaf3a3ac95268d5d
 ```
 
 ## Known limitations
