@@ -12,8 +12,9 @@ Consolidated results and open questions. Environment: source-built JamesDSP VM (
 | Speaker EEL | NaN, inf and 1e9 input | pending rerun after guard correction | NOT RUN |
 | IEM IRS | gates | all met | PASS |
 | IEM chain | noise, sines, hot input at max effects | peak held 0.8414 | PASS |
-| IEM EEL v4 | effects-off identity · bypass identity | bit-exact | PASS |
-| IEM EEL v4 | NaN / inf / 1e9 input | no non-finite output, recovers | PASS |
+| IEM EEL v4 (previous revision) | effects-off identity · bypass identity | bit-exact | PASS |
+| IEM EEL v4 (previous revision) | NaN / inf / 1e9 input | no non-finite output, recovers | PASS |
+| IEM EEL v5 | Effects / Limiter only selector | source review only; VM regression pending | NOT RUN |
 | Both | app slider parse | static regex port only | CONDITIONAL |
 | Both | app, native convolver, ARM, device | — | NOT RUN |
 | Both | listening, null test, re-measurement | — | NOT RUN |
@@ -21,7 +22,7 @@ Consolidated results and open questions. Environment: source-built JamesDSP VM (
 ## Corrections on record
 
 - The speaker EEL's six non-finite guards were corrected in the repository. The speaker NaN / inf / 1e9 test is now explicitly marked `NOT RUN` until rerun against the corrected source.
-- Other listed results retain their previously recorded scope; this edit does not claim a new VM test run.
+- Other listed results retain their previously recorded scope; this edit does not claim a new VM test run. The v5 processing-mode selector is new and remains untested in the VM, app and on ARM.
 - An early report cited the wrong upstream source revision; the relevant code was identical, and the pin was corrected.
 
 ## Open questions
