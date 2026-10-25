@@ -1,4 +1,4 @@
-# HyperAudio DSP
+# HyperAudio DSP by Noushad M.
 
 DSP correction chains for two specific playback systems, built for
 [RootlessJamesDSP](https://github.com/ThePBone/RootlessJamesDSP). Each chain
@@ -61,35 +61,41 @@ zero.
 ## Repository structure
 
 ```
-hyperaudio-dsp/
-├── LICENSE                   
-├── LICENSE-MIT               
-├── LICENSE-CC-BY-SA-4.0      
-├── ATTRIBUTION.md            
-├── README.md                 
-├── index.html                
+hyperaudioo/
+├── LICENSE                   Points to the two license files
+├── LICENSE-MIT               Code (EEL2)
+├── LICENSE-CC-BY-SA-4.0      Audio artifacts (.irs, .vdc, reports)
+├── ATTRIBUTION.md            AutoEq, Speaker Ranking, RootlessJamesDSP
+├── README.md                 This file
+├── index.html                Interactive A/B test harness (see docs)
 │
-├── Redmi_12/
-│   ├── HA™ S Master.eel
-│   ├── HA™ S Master.irs
-│   ├── HA™ S Master.vdc
-│   ├── Setting_Guide_S.txt
-│   └── report_Redmi_12.txt
+├── redmi_12/
+│   ├── HA_S_Master.eel               Post-IRS transparent limiter
+│   ├── HA_S_Master.irs               8192-tap FIR correction
+│   ├── HA_S_Master.vdc               Identity DDC (no correction)
+│   ├── Setting_Guide_S.txt           On-device setup instructions
+│   └── report_Redmi_12.txt           Numerical report
 │
 ├── edx_pro/
-│   ├── HA IEM v3.irs
-│   ├── HA IEM v3.vdc
-│   ├── IEM HA v3.eel
-│   ├── Setting_Guide_IEM.txt
-│   └── report_EDX_HA.txt
+│   ├── HA_IEM_v3.eel                 Residual limiter (v1, in progress)
+│   ├── HA_IEM_v3.irs                 2048-tap minimum-phase FIR correction
+│   ├── HA_IEM_v3.vdc                 Dual-rate VDC correction
+│   ├── Setting_Guide_IEM.txt         On-device setup instructions
+│   └── report_EDX_HA.txt             Numerical report
 │
 ├── docs/
-│   ├── methodology.md
-│   └── test_report.md
+│   ├── methodology.md                Synthesis, gating, validation method
+│   └── test_report.md                Test results and open questions
 │
 └── assets/
-    ├── script.js
-    └── style.css              
+    ├── banner.svg                    GitHub repo cover
+    ├── logo.svg                      Brand mark (favicon, avatar)
+    ├── Speaker_AB_Harness.webp       Speaker AB Harness Report
+    ├── IEM_AB_Harness.webp           IEM AB Harness Report
+    ├── script.js                     Core JavaScript
+    └── style.css                     Core Style CSS
+    
+              
 ```
 
 ## How to use
