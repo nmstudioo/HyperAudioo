@@ -10,8 +10,14 @@ licensed under the MIT License:
 
 The AutoEq CSV inputs used here were sourced from RikudouGoku's
 measurement database (squig.link). AutoEq output CSVs derived from that
-data are used as the input to the design process documented in
-generate_irs.py and in the numerical reports.
+data are used as inputs to the design process described in
+`docs/methodology.md` and the numerical reports.
+
+The IRS generator script and its complete source inputs are not included
+in this repository. Consequently, the full artifact-generation process is
+not reproducible from this repository alone. The MIT license on AutoEq
+covers AutoEq's code; it does not automatically establish the license or
+redistribution rights for third-party measurement data.
 
 ## Speaker Ranking
 
@@ -19,7 +25,10 @@ Some Warm preset designs were derived from Speaker Ranking's
 16-measurement aggregate preset exports for the KZ EDX Pro. The
 coefficients used here are a re-design derived from those exported
 parameters; Speaker Ranking's original preset exports are not redistributed
-in this repository.
+in this repository. The licensing and redistribution permissions for the
+upstream RikudouGoku measurements and Speaker Ranking preset exports have
+not been independently verified; no claim is made here that AutoEq's MIT
+license applies to those third-party data.
 
 ## RootlessJamesDSP
 
