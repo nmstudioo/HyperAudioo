@@ -123,8 +123,8 @@ hyperaudioo/
 Level-matched blind comparison. Open [`index.html`](index.html) or the hosted page: **https://nmstudioo.github.io/HyperAudioo**
 
 <p align="center">
-  <img src="https://nmstudioo.github.io/HyperAudioo/assets/Speaker_AB_Harness.webp" alt="Speaker A/B harness" width="49%">
-  <img src="https://nmstudioo.github.io/HyperAudioo/assets/IEM_AB_Harness.webp" alt="IEM A/B harness" width="49%">
+  <img src="https://nmstudioo.github.io/HyperAudioo/assets/Speaker_AB_Harness.svg" alt="Speaker A/B harness" width="49%">
+  <img src="https://nmstudioo.github.io/HyperAudioo/assets/IEM_AB_Harness.svg" alt="IEM A/B harness" width="49%">
 </p>
 
 ## Validation state
