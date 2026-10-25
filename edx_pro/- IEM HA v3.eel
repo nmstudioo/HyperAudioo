@@ -1,0 +1,324 @@
+desc: HyperAudio IEM Core v4 - Surround Deesser Limiter
+//tags: hyperaudio iem edx surround crossfeed deesser limiter lookahead
+
+// ============================================================
+// DESIGN BASIS:
+//   H_residual = H_VDC / H_IRS
+//   max |H_residual - 1| = 3e-6 dB across 8459 points
+//   => No tonal correction here. Ever.
+//
+// v4 adds three optional blocks, each fully off at 0 (bit-exact bypass):
+//   1 Deesser: split-band dynamic cut around 6.5 kHz (EDX 5k and 8k trait)
+//   2 Surround: head-shadow crossfeed with interaural delay (speaker-like image)
+//   3 Space width: side-channel high shelf (ambience and width)
+// Then input gain and the sample-peak lookahead limiter, as in v3.
+//
+// Bypass is delayed by LOOK samples (1 ms @ 48 kHz) by design.
+// Both paths share the same delay -> no comb during crossfade.
+// ============================================================
+
+// MASTER
+master:1<0,1,1{Off,On}>Master
+
+// LIMITER
+limMode:0<0,4,1{Default,Safe,Transparent,Customize,Off}>Limiter mode
+customCeil10:-15<-600,0,1>Custom ceiling tenths dBFS
+customRelease:80<10,500,1>Custom release ms
+
+// INPUT
+input10:0<-120,0,1>Input gain tenths dB
+
+// CLARITY AND SPACE
+dsAmt:40<0,100,1>Deesser Amount
+dsThr10:-200<-500,-100,1>Deesser Threshold tenths dBFS
+sur3d:40<0,100,1>Surround 3D Amount
+spaceW10:20<0,60,1>Space Width tenths dB
+
+@init
+// MANDATORY: every slider reassigned
+master        = 1;
+limMode       = 0;
+customCeil10  = -15;
+customRelease = 80;
+input10       = 0;
+dsAmt         = 40;
+dsThr10       = -200;
+sur3d         = 40;
+spaceW10      = 20;
+
+// Constants
+fs   = srate > 0 ? srate : 48000;
+LOOK = 48;              // delay-line length / lookahead (1 ms @ 48 kHz)
+WIN  = LOOK + 1;        // sliding window: LOOK+1 so peak req is still in window at output time
+
+// Derived (initial values; refreshed on change inside the sample section)
+effCeil  = -1.5;
+effRel   = 80;
+ceil_lin = 10 ^ (effCeil / 20);
+rel_k    = exp(-1 / (fs * effRel * 0.001));
+ig_lin   = 1.0;
+
+// Buffer layout - offset avoids collision with VM variables
+mem     = 10000;
+D_BUF_L = mem;              // size LOOK
+D_BUF_R = D_BUF_L + LOOK;   // size LOOK
+G_BUF   = D_BUF_R + LOOK;   // size WIN
+P_BUF   = G_BUF + WIN;      // size WIN
+S_BUF   = P_BUF + WIN;      // size WIN + 1
+
+// Init buffers (parenthesized loop bodies for parser safety)
+i = 0;
+loop(LOOK, (D_BUF_L[i] = 0; D_BUF_R[i] = 0; i += 1;));
+i = 0;
+loop(WIN, (G_BUF[i] = 1; P_BUF[i] = 1; i += 1;));
+i = 0;
+loop(WIN + 1, (S_BUF[i] = 1e30; i += 1;));
+
+// ---- v4 effect constants ----
+pi2 = 6.28318530718;
+// Deesser band-pass at 6.5 kHz, Q 1.0 (RBJ constant 0 dB peak)
+w0 = pi2 * 6500 / fs;
+c0 = cos(w0);
+al = sin(w0) / 2.0;
+a0 = 1.0 + al;
+ds_b0 = al / a0;
+ds_b2 = -al / a0;
+ds_a1 = -2.0 * c0 / a0;
+ds_a2 = (1.0 - al) / a0;
+ds1L = 0; ds2L = 0; ds1R = 0; ds2R = 0;
+dsEnv = 0; dsGR = 0;
+dsAtk  = 1.0 - exp(-1.0 / (fs * 0.0003));
+dsRel  = 1.0 - exp(-1.0 / (fs * 0.040));
+dsGAtk = 1.0 - exp(-1.0 / (fs * 0.0005));
+dsGRel = 1.0 - exp(-1.0 / (fs * 0.050));
+ds_maxgr = 4.8;
+ds_thr   = 0.1;
+// Crossfeed: one-pole low-pass 700 Hz on the cross path, 0.28 ms delay
+xfA = 1.0 - exp(-pi2 * 700 / fs);
+XDLY = floor(0.00028 * fs + 0.5);
+XDLY < 1 ? XDLY = 1;
+XDLY > 30 ? XDLY = 30;
+XB_L = 12000;
+XB_R = 12032;
+i = 0;
+loop(32, (XB_L[i] = 0; XB_R[i] = 0; i += 1;));
+xwr = 0;
+xfL = 0; xfR = 0;
+xf_g = 0.2;
+// Space width: side-channel high shelf above 3 kHz
+wA = 1.0 - exp(-pi2 * 3000 / fs);
+wSlp = 0;
+w_lin = 0.1220;
+// Delayed processed path (limiter output) buffers
+PD_L = 12100;
+PD_R = 12200;
+i = 0;
+loop(LOOK, (PD_L[i] = 0; PD_R[i] = 0; i += 1;));
+effCtl = 0;
+prevDsAmt = -99999;
+prevDsThr = -99999;
+prevSur   = -99999;
+prevSpace = -99999;
+
+// Limiter state
+dhead = 0;
+bpos  = 0;
+gs    = 1.0;
+
+// Change tracking (sentinel forces first-sample refresh)
+prevMode     = -99999;
+prevCeil10   = -99999;
+prevRelease  = -99999;
+prevInput10  = -99999;
+
+// Bypass crossfade
+bypass_state  = 0;
+bypass_target = 0;
+bypass_inc    = 1 / (0.020 * fs);
+
+@sample
+// Input guard (NaN-safe form: a negated comparison is not NaN-safe in this VM)
+abs(spl0) < 1e6 ? 0 : (spl0 = 0.0);
+abs(spl1) < 1e6 ? 0 : (spl1 = 0.0);
+
+// Parameter refresh
+(limMode != prevMode) + (customCeil10 != prevCeil10) + (customRelease != prevRelease) > 0 ? (
+  effCeil = -1.5;
+  effRel  = 80;
+  limMode == 0 ? ( effCeil = -1.5; effRel = 80;  );
+  limMode == 1 ? ( effCeil = -2.0; effRel = 120; );
+  limMode == 2 ? ( effCeil = -1.0; effRel = 200; );
+  limMode == 3 ? ( effCeil = customCeil10 / 10; effRel = customRelease; );
+  ceil_lin    = 10 ^ (effCeil / 20);
+  rel_k       = exp(-1 / (fs * effRel * 0.001));
+  prevMode    = limMode;
+  prevCeil10  = customCeil10;
+  prevRelease = customRelease;
+);
+
+(input10 != prevInput10) ? (
+  ig_lin      = 10 ^ (input10 / 200);
+  prevInput10 = input10;
+);
+
+(dsAmt != prevDsAmt) ? (
+  ds_maxgr  = dsAmt * 0.12;
+  prevDsAmt = dsAmt;
+);
+(dsThr10 != prevDsThr) ? (
+  ds_thr    = 10 ^ (dsThr10 / 200);
+  prevDsThr = dsThr10;
+);
+(sur3d != prevSur) ? (
+  xf_g    = 0.5 * sur3d / 100;
+  prevSur = sur3d;
+);
+(spaceW10 != prevSpace) ? (
+  w_lin     = 10 ^ (spaceW10 / 200) - 1;
+  prevSpace = spaceW10;
+);
+
+// Bypass target
+bypass_target = 0;
+master == 0  ? bypass_target = 1;
+limMode == 4 ? bypass_target = 1;
+
+bypass_state < bypass_target ? (
+  bypass_state = min(bypass_target, bypass_state + bypass_inc);
+) : (
+  bypass_state = max(bypass_target, bypass_state - bypass_inc);
+);
+
+// Raw input (guarded)
+x0 = spl0;
+x1 = spl1;
+
+// ---- Effects chain on the processed path (raw x0 x1 kept for bypass) ----
+p0 = x0;
+p1 = x1;
+
+// 1 Deesser (split band, linked detection, idle = exact passthrough)
+dsAmt > 0 ? (
+  bpL = ds_b0 * x0 + ds1L;
+  ds1L = 0 - ds_a1 * bpL + ds2L;
+  ds2L = ds_b2 * x0 - ds_a2 * bpL;
+  bpR = ds_b0 * x1 + ds1R;
+  ds1R = 0 - ds_a1 * bpR + ds2R;
+  ds2R = ds_b2 * x1 - ds_a2 * bpR;
+  abs(bpL) < 1e6 ? 0 : (bpL = 0.0; ds1L = 0.0; ds2L = 0.0;);
+  abs(bpR) < 1e6 ? 0 : (bpR = 0.0; ds1R = 0.0; ds2R = 0.0;);
+  det = max(abs(bpL), abs(bpR));
+  det > dsEnv ? (
+    dsEnv += dsAtk * (det - dsEnv);
+  ) : (
+    dsEnv += dsRel * (det - dsEnv);
+  );
+  gr = 0;
+  dsEnv > ds_thr ? (
+    gr = min(ds_maxgr, 8.685889638 * log(dsEnv / ds_thr) * 0.6667);
+  );
+  gr > dsGR ? (
+    dsGR += dsGAtk * (gr - dsGR);
+  ) : (
+    dsGR += dsGRel * (gr - dsGR);
+  );
+  dsGain = 1.0;
+  dsGR > 0.0001 ? dsGain = exp(0 - dsGR * 0.1151292546);
+  p0 = x0 - (1.0 - dsGain) * bpL;
+  p1 = x1 - (1.0 - dsGain) * bpR;
+);
+
+// 2 Surround: crossfeed built as a delayed low-passed side cut, so the mid (mono) signal is exactly untouched
+sur3d > 0 ? (
+  xfL += xfA * (p0 - xfL);
+  xfR += xfA * (p1 - xfR);
+  XB_L[xwr] = xfL;
+  XB_R[xwr] = xfR;
+  xrd = xwr - XDLY;
+  xrd < 0 ? xrd += 32;
+  dxl = XB_L[xrd];
+  dxr = XB_R[xrd];
+  q0 = p0 - xf_g * dxl + xf_g * dxr;
+  q1 = p1 - xf_g * dxr + xf_g * dxl;
+  xwr += 1;
+  xwr >= 32 ? xwr = 0;
+  p0 = q0;
+  p1 = q1;
+);
+
+// 3 Space width: side high shelf, mid untouched
+spaceW10 > 0 ? (
+  mid  = (p0 + p1) * 0.5;
+  side = (p0 - p1) * 0.5;
+  wSlp += wA * (side - wSlp);
+  side2 = side + w_lin * (side - wSlp);
+  p0 = mid + side2;
+  p1 = mid - side2;
+);
+
+// State guards and slow denormal cleanup
+effCtl += 1;
+effCtl >= 1024 ? (
+  effCtl = 0;
+  abs(ds1L) < 1e-30 ? ( ds1L = 0; ds2L = 0; );
+  abs(ds1R) < 1e-30 ? ( ds1R = 0; ds2R = 0; );
+  abs(dsEnv) < 1e-30 ? dsEnv = 0;
+  abs(xfL) < 1e-30 ? xfL = 0;
+  abs(xfR) < 1e-30 ? xfR = 0;
+  abs(wSlp) < 1e-30 ? wSlp = 0;
+);
+
+// Gain request (input gain included in sensitivity)
+pk  = max(abs(p0 * ig_lin), abs(p1 * ig_lin));
+req = pk > ceil_lin ? ceil_lin / pk : 1.0;
+
+// Sliding-window min (prefix + suffix)
+G_BUF[bpos] = req;
+bpos == 0 ? (
+  P_BUF[0] = req;
+) : (
+  P_BUF[bpos] = min(P_BUF[bpos - 1], req);
+);
+
+win_min = min(P_BUF[bpos], S_BUF[bpos + 1]);
+
+bpos += 1;
+bpos >= WIN ? (
+  S_BUF[WIN - 1] = G_BUF[WIN - 1];
+  i = WIN - 2;
+  loop(WIN - 1, (S_BUF[i] = min(G_BUF[i], S_BUF[i + 1]); i -= 1;));
+  S_BUF[WIN] = 1e30;
+  bpos = 0;
+);
+
+// Instant attack (preemptive: peak enters window 48 samples before it hits output)
+// Exponential release (smooth recovery after peaks leave the window)
+win_min < gs ? (
+  gs = win_min;
+) : (
+  gs = rel_k * gs + (1 - rel_k) * win_min;
+);
+
+// Delay lines (raw for bypass, processed for the limiter path)
+dly_l = D_BUF_L[dhead];
+dly_r = D_BUF_R[dhead];
+pd_l = PD_L[dhead];
+pd_r = PD_R[dhead];
+PD_L[dhead] = p0;
+PD_R[dhead] = p1;
+D_BUF_L[dhead] = x0;
+D_BUF_R[dhead] = x1;
+dhead += 1;
+dhead >= LOOK ? dhead = 0;
+
+// Processed path
+proc_l = pd_l * ig_lin * gs;
+proc_r = pd_r * ig_lin * gs;
+
+// Bypass path (raw delayed, no gain)
+byp_l = dly_l;
+byp_r = dly_r;
+
+// Crossfade
+spl0 = (1 - bypass_state) * proc_l + bypass_state * byp_l;
+spl1 = (1 - bypass_state) * proc_r + bypass_state * byp_r;
