@@ -1,0 +1,12 @@
+HyperAudio repository licensing summary
+
+Code files (including EEL2 scripts) are licensed under the MIT License.
+See LICENSE-MIT.
+
+Audio and correction artifacts (.irs, .vdc) and project reports are
+licensed under the Creative Commons Attribution-ShareAlike 4.0
+International Public License, to the extent the project has rights to
+license them. See LICENSE-CC-BY-SA-4.0.
+
+Third-party data provenance and licensing qualifications are documented
+in ATTRIBUTION.md.
