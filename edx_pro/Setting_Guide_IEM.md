@@ -6,9 +6,9 @@
 
 | Order | Module | File | Role |
 |:-:|---|---|---|
-| 1 | DDC | `- HA IEM v3.vdc` | Identity, dual-rate (44.1 and 48 kHz banks). No correction. |
-| 2 | Convolver | `- HA IEM v3.irs` | 2048-frame minimum-phase FIR, 48 kHz, float32, stereo. The correction. |
-| 3 | Liveprog | `- HA IEM v3.eel` | De-esser, Surround 3D, Space Width, then the look-ahead limiter. |
+| 1 | DDC | `HA_IEM_v3.vdc` | Identity, dual-rate (44.1 and 48 kHz banks). No correction. |
+| 2 | Convolver | `HA_IEM_v3.irs` | 2048-frame minimum-phase FIR, 48 kHz, float32, stereo. The correction. |
+| 3 | Liveprog | `HA_IEM_v3.eel` | De-esser, Surround 3D, Space Width, then the look-ahead limiter. |
 
 Load the correction **once**, in the convolver. The DDC is an identity, so there is no second EQ to double it.
 
