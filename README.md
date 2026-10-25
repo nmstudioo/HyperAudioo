@@ -58,16 +58,16 @@ hyperaudioo/
 ├── index.html                Interactive A/B test harness (see docs)
 │
 ├── Redmi_12/
-│   ├── - HA™ S Master.eel               Post-IRS transparent limiter
-│   ├── - HA™ S Master.irs               8192-tap FIR correction
-│   ├── - HA™ S Master.vdc               Identity DDC (no correction)
+│   ├── HA_Speaker_Master.eel               Post-IRS transparent limiter
+│   ├── HA_Speaker_Master.irs               8192-tap FIR correction
+│   ├── HA_Speaker_Master.vdc               Identity DDC (no correction)
 │   ├── Setting_Guide_S.md               On-device setup instructions
 │   └── report_Redmi_12.md               Numerical report
 │
 ├── edx_pro/
-│   ├── - HA IEM v3.irs                 2048-tap minimum-phase FIR correction
-│   ├── - HA IEM v3.eel                 Limiter, bypass and effects (EEL2)
-│   ├── - HA IEM v3.vdc                 Identity DDC (no correction)
+│   ├── HA_IEM_v3.irs                 2048-tap minimum-phase FIR correction
+│   ├── HA_IEM_v3.eel                 Limiter, bypass and effects (EEL2)
+│   ├── HA_IEM_v3.vdc                 Identity DDC (no correction)
 │   ├── Setting_Guide_IEM.md            On-device setup instructions
 │   └── report_EDX_HA.md                Numerical report
 │
@@ -97,9 +97,9 @@ hyperaudioo/
 
 ### 🔊 Redmi 12
 `Redmi_12/`
-- `- HA™ S Master.vdc`
-- `- HA™ S Master.irs`
-- `- HA™ S Master.eel`
+- `HA_Speaker_Master.vdc`
+- `HA_Speaker_Master.irs`
+- `HA_Speaker_Master.eel`
 
 [Setting guide](Redmi_12/Setting_Guide_S.md) · [Report](Redmi_12/report_Redmi_12.md)
 
@@ -108,9 +108,9 @@ hyperaudioo/
 
 ### 🎧 KZ EDX Pro
 `edx_pro/`
-- `- HA IEM v3.vdc`
-- `- HA IEM v3.irs`
-- `- HA IEM v3.eel`
+- `HA_IEM_v3.vdc`
+- `HA_IEM_v3.irs`
+- `HA_IEM_v3.eel`
 
 [Setting guide](edx_pro/Setting_Guide_IEM.md) · [Report](edx_pro/report_EDX_HA.md)
 
@@ -145,18 +145,18 @@ Level-matched blind comparison. Open [`index.html`](index.html) or the hosted pa
 Verify downloads with `sha256sum`.
 
 ```
-Redmi_12/- HA™ S Master.vdc
+Redmi_12/HA_Speaker_Master.vdc
     953227f5aaafabb11694422e81a1968cc2515d7a5fa665a8e9ab2331df25618b
-Redmi_12/- HA™ S Master.irs
+Redmi_12/HA_Speaker_Master.irs
     0ba8da0f4351aca761e3c7e39b37bccf9b61403f7d92ed60ecf1b23cda0c7de4
-Redmi_12/- HA™ S Master.eel
+Redmi_12/HA_Speaker_Master.eel
     dfcb7131bb4c1a9e8937e0ef1d86ac05137fb73d272b8e7826f8436d7f023ab7
 
-edx_pro/- HA IEM v3.vdc
+edx_pro/HA_IEM_v3.vdc
     933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef
-edx_pro/- HA IEM v3.irs
+edx_pro/HA_IEM_v3.irs
     b6d751a1613b48569a6ec485f477603172dcc14b0072f0c86c93b4668363b9d5
-edx_pro/- HA IEM v3.eel
+edx_pro/HA_IEM_v3.eel
     92cadeaedcfba89df109ff1d113bd1d1b80c8b0493c6e0f7908fb0b9c41dc361
 ```
 
