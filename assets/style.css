@@ -81,7 +81,6 @@ scrollbar-color:var(--dim) transparent;
 body{
 margin:0;
 background:radial-gradient(ellipse at 80% 4%,color-mix(in srgb,var(--acc) 7%,transparent),transparent 32rem),var(--bg);
-background-attachment:fixed;
 color:var(--fg);
 font:1rem/1.5 var(--sans);
 letter-spacing:-.012em;
@@ -1134,5 +1133,22 @@ scroll-behavior:auto;
 *,::before,::after{
 animation-duration:.01ms;
 transition-duration:.01ms;
+}
+}
+
+/* == Lite == */
+@media(max-width:899px){
+.bar{
+backdrop-filter:none;
+background:var(--bg);
+}
+.nav{
+background:var(--bg);
+}
+.hero-art::before,.wave-back{
+display:none;
+}
+.wave-main{
+filter:none;
 }
 }
