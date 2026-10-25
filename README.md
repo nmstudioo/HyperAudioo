@@ -8,7 +8,7 @@
 Built for [RootlessJamesDSP](https://github.com/ThePBone/RootlessJamesDSP).
 
 ![Speaker](https://img.shields.io/badge/speaker-V6%20frozen-2fd6ff?style=flat-square)
-![IEM](https://img.shields.io/badge/IEM-v3%20%2B%20v4%20EEL-8a6bff?style=flat-square)
+![IEM](https://img.shields.io/badge/IEM-v3%20IRS%20%2B%20v5%20EEL-8a6bff?style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-RootlessJamesDSP-6d8dff?style=flat-square)
 ![Rate](https://img.shields.io/badge/host%20rate-48%20kHz-8a6bff?style=flat-square)
 ![Code](https://img.shields.io/badge/code-MIT-lightgrey?style=flat-square)
@@ -31,7 +31,7 @@ This is **not** a preset collection. Every claim in this repository carries an e
 | | Device | Chain | IRS | State |
 |---|---|---|---|---|
 | 🔊 | **Redmi 12** speaker | [`Redmi_12/`](Redmi_12/) | 8192 taps · 48 kHz | V6 · frozen |
-| 🎧 | **KZ EDX Pro** IEM (24 Ω, 112 dB/mW) | [`edx_pro/`](edx_pro/) | 2048 taps · 48 kHz | v3 IRS · v4 EEL |
+| 🎧 | **KZ EDX Pro** IEM (24 Ω, 112 dB/mW) | [`edx_pro/`](edx_pro/) | 2048 taps · 48 kHz | v3 IRS · v5 EEL |
 
 ## Architecture
 
@@ -66,7 +66,7 @@ hyperaudioo/
 │
 ├── edx_pro/
 │   ├── HA_IEM_v3.irs                 2048-tap minimum-phase FIR correction
-│   ├── HA_IEM_v3.eel                 Limiter, bypass and effects (EEL2)
+│   ├── HA_IEM_v3.eel                 Selectable effects / limiter-only paths (EEL2)
 │   ├── HA_IEM_v3.vdc                 Identity DDC (no correction)
 │   ├── Setting_Guide_IEM.md            On-device setup instructions
 │   └── report_EDX_HA.md                Numerical report
@@ -136,7 +136,7 @@ Level-matched blind comparison. Open [`index.html`](index.html) or the hosted pa
 | Speaker EEL | 🟡 PASS (compile, ceiling, bypass); non-finite rerun pending | 🟡 USER REPORTED | 🟡 USER REPORTED |
 | IEM VDC | ✅ identity | — | — |
 | IEM IRS | ✅ PASS | ⛔ NOT RUN | ⛔ NOT RUN |
-| IEM EEL v4 | ✅ PASS (effects, ceiling, bypass, non-finite) | ⛔ NOT RUN | ⛔ NOT RUN |
+| IEM EEL effects path | ✅ prior v4 checks (effects, ceiling, bypass, non-finite) | ⛔ NOT RUN | ⛔ NOT RUN |\n| IEM EEL v5 mode selector | 🟡 source review only; VM retest pending | ⛔ NOT RUN | ⛔ NOT RUN |
 
 *Numerically qualified* never implies device testing or listening. Offline = source-built JamesDSP VM on x86_64, not ARM and not the app. Details: [`docs/test_report.md`](docs/test_report.md).
 
@@ -160,12 +160,12 @@ edx_pro/HA_IEM_v3.eel
     97bf8d60ed1ab01c8047a4836c04af60953dcf9b650d527ceaf3a3ac95268d5d
 ```
 
-## Known limitations
+## Known limitations\n\n- **Reproducibility:** `iem_build.py` / `generate_irs.py` and complete source inputs are not included. The published IRS cannot be regenerated from this repository alone.
 
 - **Speaker IRS provenance:** the measurement setup is not documented here. If a mic's response was inside it, it is inside the filter.
 - **IEM voicing has no measurement behind it.** It is a labelled design choice.
 - **Not Dolby.** The IEM surround is crossfeed plus width, not HRTF virtualisation.
-- **ARM unverified.** All EEL tests ran on x86_64.
+- **ARM unverified.** All EEL tests ran on x86_64. The v5 processing-mode selector has not yet been VM- or device-tested.
 - **Sample-peak limiting** is not true-peak or excursion protection.
 - **48 kHz only.** At any other rate the IRS is stretched or shortened.
 
