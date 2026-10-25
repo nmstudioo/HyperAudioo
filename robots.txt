@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://nmstudioo.github.io/HyperAudioo/sitemap.xml
