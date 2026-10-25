@@ -19,7 +19,7 @@ Built from the exact magnitude of the v2 IRS (the user's own corrections kept), 
 |---|---|:-:|
 | Frames / format | 2048, float32 stereo L=R, 48 kHz | PASS |
 | Peak tap | 0.4575 @ 0 | PASS |
-| L1 | 1.2500 | PASS |
+| L1 | 1.249987 | PASS (margin ~0.000013) |
 | Tail n ≥ 1024 | 1.7e-9 | PASS |
 | Max gain 20 Hz–20 kHz | −0.84 dB | PASS |
 | Magnitude (dB) | 30 Hz −5.0 · 100 Hz −6.9 · 200 Hz −8.5 · 500 Hz −4.3 · 1 kHz −2.3 · 3 kHz −2.2 · 5 kHz −6.5 · 8 kHz −6.5 · 15 kHz −8.4 | info |
@@ -39,7 +39,7 @@ Group delay is large near 200 Hz (−27.7 samples), inherited from v2's steep 16
 | Hot input, max settings | peak held at 0.8414 (−1.5 dBFS) | PASS |
 | NaN / inf / 1e9 input | zero non-finite output; recovers | PASS |
 
-Limiter modes in the v4 script: Default −1.5 dBFS / 80 ms, Safe −2.0 / 120, Transparent −1.0 / 200, Customize, Off. The Default ceiling (0.8414) was the one tested.
+Limiter modes in the v4 script: Default −1.5 dBFS / 80 ms, Safe −2.0 / 120, Transparent −1.0 / 200, Customize, Full bypass. `Full bypass` (and Master Off) selects the delayed raw-input path and bypasses the entire processing chain, not only the limiter. The Default ceiling (0.8414) was the one tested.
 
 A first crossfeed dipped mono content 4.7 dB near 1 kHz; it was rebuilt as a delayed low-passed side cut.
 
@@ -50,6 +50,6 @@ A first crossfeed dipped mono content 4.7 dB near 1 kHz; it was rebuilt as a del
 - Clarity is addressed by de-essing and the low-mid clearing, not by a measured retune.
 - De-esser threshold default is a guess.
 
-**Stale comment:** the EEL header still states `H_residual = H_VDC / H_IRS` and a 3e-6 dB figure from an earlier design. The shipped VDC is an identity, so the sentence no longer describes this chain.
+The EEL header now states the shipped architecture accurately: the VDC is identity, the IRS carries the tonal correction, and the EEL stage adds no static tonal EQ.
 
 SHA-256 values are in the README.
