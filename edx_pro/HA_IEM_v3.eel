@@ -1,23 +1,25 @@
-desc: HyperAudio IEM Core v4 - Surround Deesser Limiter
-//tags: hyperaudio iem edx surround crossfeed deesser limiter lookahead
+desc: HyperAudio IEM Core v5 - Effects or Limiter Only
+//tags: hyperaudio iem edx processing effects limiter only surround crossfeed deesser lookahead
 
 // ============================================================
 // DESIGN BASIS:
 //   The paired VDC is identity; the IRS carries the complete tonal correction.
 //   This EEL stage adds no static tonal EQ. Optional effects are separately controlled.
 //
-// v4 adds three optional blocks, each fully off at 0 (bit-exact bypass):
+// v5 adds a processing-path selector. Effects is the default; Limiter only skips all effects.
+// The three effect controls remain independently available in Effects mode.
 //   1 Deesser: split-band dynamic cut around 6.5 kHz (EDX 5k and 8k trait)
 //   2 Surround: head-shadow crossfeed with interaural delay (speaker-like image)
 //   3 Space width: side-channel high shelf (ambience and width)
-// Then input gain and the sample-peak lookahead limiter, as in v3.
+// Both paths retain input gain and the sample-peak lookahead limiter.
 //
 // Bypass is delayed by LOOK samples (1 ms @ 48 kHz) by design.
 // Both paths share the same delay -> no comb during crossfade.
 // ============================================================
 
-// MASTER
+// MASTER AND PROCESSING PATH
 master:1<0,1,1{Off,On}>Master
+procMode:0<0,1,1{Effects,Limiter only}>Processing mode
 
 // LIMITER
 limMode:0<0,4,1{Default,Safe,Transparent,Customize,Full bypass}>Limiter mode
@@ -36,6 +38,7 @@ spaceW10:20<0,60,1>Space Width tenths dB
 @init
 // MANDATORY: every slider reassigned
 master        = 1;
+procMode      = 0;
 limMode       = 0;
 customCeil10  = -15;
 customRelease = 80;
@@ -126,6 +129,7 @@ gs    = 1.0;
 
 // Change tracking (sentinel forces first-sample refresh)
 prevMode     = -99999;
+prevProcMode = -99999;
 prevCeil10   = -99999;
 prevRelease  = -99999;
 prevInput10  = -99999;
@@ -192,9 +196,18 @@ bypass_state < bypass_target ? (
 x0 = spl0;
 x1 = spl1;
 
-// ---- Effects chain on the processed path (raw x0 x1 kept for bypass) ----
+// Effects mode is the default. Limiter-only leaves p0/p1 untouched.
 p0 = x0;
 p1 = x1;
+(procMode != prevProcMode) ? (
+  // Clear effect memories on every path switch; no stale state on re-entry.
+  ds1L = 0; ds2L = 0; ds1R = 0; ds2R = 0; dsEnv = 0; dsGR = 0;
+  xfL = 0; xfR = 0; wSlp = 0; xwr = 0;
+  i = 0;
+  loop(32, (XB_L[i] = 0; XB_R[i] = 0; i += 1;));
+  prevProcMode = procMode;
+);
+procMode == 0 ? (
 
 // 1 Deesser (split band, linked detection, idle = exact passthrough)
 dsAmt > 0 ? (
@@ -266,6 +279,8 @@ effCtl >= 1024 ? (
   abs(xfR) < 1e-30 ? xfR = 0;
   abs(wSlp) < 1e-30 ? wSlp = 0;
 );
+
+ );
 
 // Gain request (input gain included in sensitivity)
 pk  = max(abs(p0 * ig_lin), abs(p1 * ig_lin));
