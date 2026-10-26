@@ -1,4 +1,4 @@
-# HyperAudio IRS Reference
+# HyperAudio IRS reference
 
 > Documents the two shipped impulse-response assets and the project's file-level and numerical QA. Offline numerical checks are not native-app, ARM, or device-convolver tests.
 
@@ -106,12 +106,14 @@ Offline FIR and chain simulations use a source-built JamesDSP VM on x86_64 plus 
 - Reporting the design response instead of the response measured from the written file.
 - Updating an IRS without updating its hash, profile report, and test report.
 
-## Related documentation
+## Related references
 
 - [Methodology](methodology.md)
 - [VDC reference](vdc_functions.md)
 - [EEL2 reference](eel_functions)
 - [Test report](test_report.md)
+
+---
 
 **Reference version:** 1.0  
 **Last checked against repository assets:** October 2026
