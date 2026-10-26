@@ -35,7 +35,7 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"HyperAudio","applicationCategory":"MultimediaApplication","operatingSystem":"Android (RootlessJamesDSP)","url":"https://nmstudioo.github.io/HyperAudioo/","image":"https://nmstudioo.github.io/HyperAudioo/assets/og-image.png","author":{"@type":"Person","name":"Noushad M."},"license":"https://opensource.org/licenses/MIT","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
 <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
 <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
@@ -50,6 +50,14 @@
 <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
 <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
 <symbol id="i-github" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3M12 9v4M12 17h.01"/></symbol>
+<symbol id="i-ext" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16M18 17V9M13 17V5M8 17v-3"/></symbol>
+<symbol id="i-scale" viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1ZM2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1ZM7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></symbol>
+<symbol id="i-scroll" viewBox="0 0 24 24"><path d="M19 17V5a2 2 0 0 0-2-2H4M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="m5 12 7-7 7 7M12 19V5"/></symbol>
 </svg>
 <header class="bar">
 <a class="brand" href="#top"><img src="assets/logo.svg" alt="" width="24" height="24">HyperAudio</a>
@@ -61,7 +69,7 @@
 <a href="#docs">Docs</a>
 </nav>
 <a href="#qa" id="qaChip" class="chip">QA …</a>
-<a class="round" href="https://github.com/nmstudioo/HyperAudioo" aria-label="GitHub repository"><svg class="i" aria-hidden="true"><use href="#i-github"/></svg></a>
+<a class="round" href="https://github.com/nmstudioo/HyperAudioo" aria-label="GitHub repository"><svg class="i" aria-hidden="true"><use href="#i-github"/></svg><svg class="i ext" aria-hidden="true"><use href="#i-ext"/></svg></a>
 <button id="themeBtn" class="round" type="button" aria-label="Toggle theme"><svg class="i sun" aria-hidden="true"><use href="#i-sun"/></svg><svg class="i moon" aria-hidden="true"><use href="#i-moon"/></svg></button>
 </header>
 <main id="top">
@@ -72,7 +80,7 @@
 <p class="lede">Purpose-built DSP correction chains for the KZ EDX Pro and Redmi 12 speaker. Transparent signal paths, downloadable components and browser-based file verification.</p>
 <div class="hero-actions">
 <a class="btn" href="#choose"><svg class="i" aria-hidden="true"><use href="#i-headphones"/></svg>Explore profiles</a>
-<a class="btn ghost" href="#docs">How it works <span aria-hidden="true">↗</span></a>
+<a class="btn ghost" href="#docs">How it works<svg class="i xs" aria-hidden="true"><use href="#i-chev"/></svg></a>
 </div>
 <div class="hero-meta"><span>DDC <b>VDC</b></span><i></i><span>Convolution <b>IRS</b></span><i></i><span>Processing <b>EEL2</b></span></div>
 <p class="credit">Designed &amp; tuned by <b>Noushad M.</b> <span>·</span> Offline file verification · Device testing status disclosed</p>
@@ -83,8 +91,8 @@
 <defs><linearGradient id="waveStroke" x1="0" x2="1"><stop offset="0" stop-color="#C5F36B" stop-opacity=".12"/><stop offset=".48" stop-color="#C5F36B"/><stop offset="1" stop-color="#C5F36B" stop-opacity=".2"/></linearGradient></defs>
 <g class="wave-grid"><path d="M0 50H560M0 100H560M0 150H560M0 200H560M0 250H560M70 0V300M140 0V300M210 0V300M280 0V300M350 0V300M420 0V300M490 0V300"/></g>
 <path class="wave-back" d="M0 150 C35 150 35 145 58 150 S85 190 110 150 140 70 165 150 195 225 220 150 250 110 275 150 305 190 330 150 360 55 385 150 415 230 440 150 470 120 495 150 525 180 560 150"/>
-<path class="wave-main" d="M0 150 C35 150 35 145 58 150 S85 190 110 150 140 70 165 150 195 225 220 150 250 110 275 150 305 190 330 150 360 55 385 150 415 230 440 150 470 120 495 150 525 180 560 150"/>
-<path class="wave-thin" d="M0 150 C35 150 35 148 58 150 S85 172 110 150 140 105 165 150 195 190 220 150 250 132 275 150 305 172 330 150 360 98 385 150 415 194 440 150 470 136 495 150 525 166 560 150"/>
+<path class="wave-main" pathLength="1" d="M0 150 C35 150 35 145 58 150 S85 190 110 150 140 70 165 150 195 225 220 150 250 110 275 150 305 190 330 150 360 55 385 150 415 230 440 150 470 120 495 150 525 180 560 150"/>
+<path class="wave-thin" pathLength="1" d="M0 150 C35 150 35 148 58 150 S85 172 110 150 140 105 165 150 195 190 220 150 250 132 275 150 305 172 330 150 360 98 385 150 415 194 440 150 470 136 495 150 525 166 560 150"/>
 </svg>
 <div class="art-bottom"><span>FREQUENCY / AMPLITUDE</span><b>20 Hz <span>—</span> 20 kHz</b></div><div class="art-index">01<span> / </span>02</div>
 </div>
@@ -94,6 +102,7 @@
 <div class="plist" id="profiles" role="group" aria-label="Profile">
 <button class="prow" type="button" data-k="iem" data-name="KZ EDX Pro" data-irs="edx_pro/HA_IEM_v3.irs" data-eel="edx_pro/HA_IEM_v3.eel" data-vdc="edx_pro/HA_IEM_v3.vdc" aria-pressed="true">
 <svg class="i lg" aria-hidden="true"><use href="#i-headphones"/></svg>
+<span class="pdot"><span class="sr"></span></span>
 <span class="pmain">
 <span class="lbl">IEM · v3 IRS · v5 EEL</span>
 <span class="ptitle">KZ EDX Pro</span>
@@ -104,6 +113,7 @@
 </button>
 <button class="prow" type="button" data-k="spk" data-name="Redmi 12 Speaker" data-irs="Redmi_12/HA_Speaker_Master.irs" data-eel="Redmi_12/HA_Speaker_Master.eel" data-vdc="Redmi_12/HA_Speaker_Master.vdc" aria-pressed="false">
 <svg class="i lg" aria-hidden="true"><use href="#i-speaker"/></svg>
+<span class="pdot"><span class="sr"></span></span>
 <span class="pmain">
 <span class="lbl">Speaker · V6 frozen</span>
 <span class="ptitle">Redmi 12 Speaker</span>
@@ -122,7 +132,7 @@
 <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--acc)" stop-opacity=".28"/><stop offset="1" stop-color="var(--acc)" stop-opacity="0"/></linearGradient></defs>
 <g id="grid"></g>
 <path id="area" fill="url(#cg)"/>
-<path id="line"/>
+<path id="line" pathLength="1"/>
 <line id="cur"/>
 </svg>
 <div class="tip" id="tip" hidden><div><span>FREQ</span><b id="tip-f"></b></div><div><span>GAIN</span><b id="tip-g"></b></div></div>
@@ -193,13 +203,13 @@
 <div class="fold-body">
 <p>Read the repository documents here. Each one also links to its file on GitHub.</p>
 <div class="links">
-<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/docs/methodology.md" data-doc="docs/methodology.md">Methodology</a>
-<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/docs/test_report.md" data-doc="docs/test_report.md">Test report</a>
-<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/edx_pro/Setting_Guide_IEM.md" data-doc="edx_pro/Setting_Guide_IEM.md">IEM setup</a>
-<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/Redmi_12/Setting_Guide_S.md" data-doc="Redmi_12/Setting_Guide_S.md">Speaker setup</a>
-<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/edx_pro/report_EDX_HA.md" data-doc="edx_pro/report_EDX_HA.md">EDX report</a>
-<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/Redmi_12/report_Redmi_12.md" data-doc="Redmi_12/report_Redmi_12.md">Redmi report</a>
-<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/ATTRIBUTION.md" data-doc="ATTRIBUTION.md">Attribution</a>
+<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/docs/methodology.md" data-doc="docs/methodology.md"><svg class="i xs" aria-hidden="true"><use href="#i-scale"/></svg>Methodology</a>
+<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/docs/test_report.md" data-doc="docs/test_report.md"><svg class="i xs" aria-hidden="true"><use href="#i-chart"/></svg>Test report</a>
+<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/edx_pro/Setting_Guide_IEM.md" data-doc="edx_pro/Setting_Guide_IEM.md"><svg class="i xs" aria-hidden="true"><use href="#i-book"/></svg>IEM setup</a>
+<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/Redmi_12/Setting_Guide_S.md" data-doc="Redmi_12/Setting_Guide_S.md"><svg class="i xs" aria-hidden="true"><use href="#i-book"/></svg>Speaker setup</a>
+<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/edx_pro/report_EDX_HA.md" data-doc="edx_pro/report_EDX_HA.md"><svg class="i xs" aria-hidden="true"><use href="#i-chart"/></svg>EDX report</a>
+<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/Redmi_12/report_Redmi_12.md" data-doc="Redmi_12/report_Redmi_12.md"><svg class="i xs" aria-hidden="true"><use href="#i-chart"/></svg>Redmi report</a>
+<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/ATTRIBUTION.md" data-doc="ATTRIBUTION.md"><svg class="i xs" aria-hidden="true"><use href="#i-scroll"/></svg>Attribution</a>
 </div>
 </div>
 </details>
@@ -208,14 +218,15 @@
 </main>
 <footer class="foot">
 <div class="wrap">
-<span><b>© 2026 Noushad M.</b> · Code MIT · Audio CC BY-SA 4.0 · <a href="https://github.com/nmstudioo/HyperAudioo/blob/main/LICENSE">Licences</a></span>
+<span><b>© 2026 Noushad M.</b> · Code MIT · Audio CC BY-SA 4.0 · <a href="https://github.com/nmstudioo/HyperAudioo/blob/main/LICENSE">Licences<svg class="i xs" aria-hidden="true"><use href="#i-ext"/></svg></a></span>
 <span>All computation runs locally in your browser. The hosted files are fetched and checked in your browser: IRS format, finite samples, L = R, peak ≤ 0 dBFS, max gain < 0 dB, L1 ≤ 1.25, tail ≤ −80 dBFS; identity DDC; EEL structure and slider ranges.</span>
 </div>
 </footer>
+<button class="top" id="toTop" type="button" aria-label="Back to top"><svg class="i" aria-hidden="true"><use href="#i-up"/></svg></button>
 <button class="fab" id="fab" type="button" data-all aria-label="Download all 3 files" title="Download all 3 files"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg></button>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <dialog class="reader" id="reader" aria-label="Document reader">
-<header class="reader-bar"><span class="lbl" id="readerPath"></span><a class="chip" id="readerGh" href="https://github.com/nmstudioo/HyperAudioo" rel="noopener" target="_blank">GitHub ↗</a><button class="round" id="readerClose" type="button" aria-label="Close document"><svg class="i" aria-hidden="true"><use href="#i-close"/></svg></button></header>
+<header class="reader-bar"><span class="lbl" id="readerPath"></span><a class="chip" id="readerGh" href="https://github.com/nmstudioo/HyperAudioo" rel="noopener" target="_blank">GitHub<svg class="i xs" aria-hidden="true"><use href="#i-ext"/></svg></a><button class="round" id="readerClose" type="button" aria-label="Close document"><svg class="i" aria-hidden="true"><use href="#i-close"/></svg></button></header>
 <article class="prose" id="readerBody" tabindex="0" autofocus></article>
 </dialog>
 <script src="assets/script.js"></script>
