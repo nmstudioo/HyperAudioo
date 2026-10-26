@@ -98,6 +98,12 @@ master == 0 ? (
     w = 0;
     curr_pref_min = 1.0;
     limGain = 1.0;
+    i = 0;
+    loop(10,
+      peqX1L[i]=0; peqX2L[i]=0; peqY1L[i]=0; peqY2L[i]=0;
+      peqX1R[i]=0; peqX2R[i]=0; peqY1R[i]=0; peqY2R[i]=0;
+      i += 1;
+    );
   );
 
   // Rebuild coefficients and clear filter history only when profile changes.
