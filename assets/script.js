@@ -149,9 +149,42 @@ return(i?'L':'M')+(i*120/47).toFixed(1)+' '+(16-v*14/12).toFixed(1);
 $('.spark path',p.btn).setAttribute('d',d);
 };
 
+const ico=(id,c)=>{
+const s=svg('svg',{class:'i '+(c||'xs'),'aria-hidden':'true',focusable:'false'});
+svg('use',{href:'#i-'+id},s);
+return s;
+};
+const mob=()=>matchMedia('(max-width:899px)').matches,calm=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
+const NUM=/-?\d+(?:\.\d+)?/;
+function count(el,txt){
+cancelAnimationFrame(el._r);
+const m=NUM.exec(txt),to=m?parseFloat(m[0]):NaN,from=parseFloat(el.dataset.v);
+el.dataset.v=isNaN(to)?'':to;
+if(isNaN(to)||mob()||calm()){
+el.textContent=txt;
+return;
+}
+const dec=(m[0].split('.')[1]||'').length,a=isNaN(from)?0:from,t0=performance.now();
+const tick=t=>{
+const k=Math.min(1,(t-t0)/400),v=a+(to-a)*(1-Math.pow(1-k,3));
+el.textContent=k<1?txt.replace(NUM,v.toFixed(dec)):txt;
+if(k<1)el._r=requestAnimationFrame(tick);
+};
+el._r=requestAnimationFrame(tick);
+}
+const dot=(p,a)=>{
+p.btn.dataset.qa=a.err?'warn':a.pass?'ok':'bad';
+$('.pdot .sr',p.btn).textContent='QA '+(a.err?'unavailable':a.pass?'pass':'fail');
+};
+const sweep=b=>{
+b.classList.remove('sweep');
+void b.offsetWidth;
+b.classList.add('sweep');
+};
+
 function toast(msg,err){
 const t=$('#toast');
-t.textContent=msg;
+t.replaceChildren(ico(err?'alert':'check'),msg);
 t.className='toast'+(err?' err':'');
 void t.offsetWidth;
 t.classList.add('show');
@@ -183,9 +216,23 @@ toast('Downloading 3 files');
 }
 
 /* == Chart == */
-function drawChart(a){
+function ghost(){
+const l=$('#line');
+if(!l.getAttribute('d'))return;
+const gh=svg('g',{class:'gh','aria-hidden':'true'},$('#chartSvg'));
+[$('#grid'),$('#area'),l].forEach(n=>{
+const c=n.cloneNode(true);
+c.removeAttribute('id');
+if(n==l)c.setAttribute('class','old-l');
+gh.append(c);
+});
+setTimeout(()=>gh.remove(),400);
+}
+
+function drawChart(a,anim){
 const host=$('#chart'),W=host.clientWidth-16,g=$('#grid');
 if(W<100)return;
+if(anim)ghost();
 g.replaceChildren();
 if(!a||a.err){
 cs=null;
@@ -226,6 +273,11 @@ c.style.display='none';
 $('#tip').hidden=true;
 const mx=data.reduce((p,q)=>q[1]>p[1]?q:p),mn=data.reduce((p,q)=>q[1]<p[1]?q:p);
 $('#chartSum').textContent=`${PROF[cur].name}: peak ${mx[1].toFixed(1)} dB near ${Math.round(mx[0])} Hz, dip ${mn[1].toFixed(1)} dB near ${Math.round(mn[0])} Hz.`;
+if(anim){
+host.classList.remove('draw');
+void host.offsetWidth;
+host.classList.add('draw');
+}
 }
 
 function tip(f){
@@ -250,7 +302,7 @@ $('#cur').style.display='none';
 /* == Render == */
 function show(a){
 const ok=!a.err&&a.pass,cls=ok?'ok':'bad',set=(id,v,s)=>{
-$('#st-'+id).textContent=v;
+count($('#st-'+id),v);
 $('#st-'+id+'-s').textContent=s||'';
 };
 if(a.err){
@@ -264,21 +316,32 @@ set('l1',a.l1.toFixed(4),'gate ≤ '+L1MAX);
 set('lim',isNaN(a.eel.ceil)?'—':a.eel.ceil.toFixed(1)+' dBFS','EEL default');
 }
 [$('#qaChip'),$('#qaBadge')].forEach(e=>{
-e.textContent=a.err?'QA · ERROR':ok?'QA · PASS':'QA · FAIL';
+e.replaceChildren(ico(a.err?'alert':ok?'check':'close'),a.err?'QA · ERROR':ok?'QA · PASS':'QA · FAIL');
 e.className='chip '+cls;
 });
 const s=$('#qaSeal');
-s.textContent=a.err?'Audit unavailable':ok?'Verified · hosted files':'Verification failed';
+s.replaceChildren(ico(a.err?'alert':ok?'check':'close'),a.err?'Audit unavailable':ok?'Verified · hosted files':'Verification failed');
 s.className='st '+cls;
 const D=a.err?{}:{fmt:`${a.n} taps · ${a.sr/1000} kHz`,peak:a.peak.toFixed(2)+' dBFS',gain:a.maxGain.toFixed(2)+' dB',l1:a.l1.toFixed(4),tail:`last 256 taps ${a.tail.toFixed(1)} dBFS`,vdc:`${a.vdc} sections`,eel:a.eel.ok?`${a.eel.sliders} sliders`:a.eel.issues.join(', ')||'structure invalid'};
-$$('.crow').forEach(r=>{
+const rows=$$('.crow');
+rows.forEach(r=>r.className='crow');
+void rows[0].offsetWidth;
+rows.forEach((r,i)=>{
 const k=r.dataset.c,g=!a.err&&a.c[k];
 r.className='crow'+(a.err?'':g?' ok':' bad');
+r.style.setProperty('--d',i*35+'ms');
 $('small',r).textContent=D[k]?'— '+D[k]:'';
-$('b',r).textContent=a.err?'—':g?'Pass':'Fail';
+$('b',r).replaceChildren(...(a.err?['—']:[ico(g?'check':'close'),g?'Pass':'Fail']));
 });
-$('#fab').setAttribute('aria-disabled',!ok);
-drawChart(a);
+const fb=$('#fab');
+fb.setAttribute('aria-disabled',!ok);
+if(ok&&!a.pl){
+a.pl=1;
+fb.classList.remove('pulse');
+void fb.offsetWidth;
+fb.classList.add('pulse');
+}
+drawChart(a,1);
 }
 
 function render(){
@@ -342,6 +405,7 @@ toast(all?'All checks pass':'Some checks failed',!all);
 const idle=window.requestIdleCallback||(f=>setTimeout(f,200));
 Object.values(PROF).forEach(p=>{
 const go=()=>load(p).then(a=>{
+dot(p,a);
 if(!a.err)spark(p,a);
 });
 p.k==cur?go():idle(go);
@@ -351,6 +415,7 @@ const b=e.target.closest('.prow');
 if(b&&(b.dataset.k!=cur||!cache[cur])){
 cur=b.dataset.k;
 render();
+sweep(b);
 }
 });
 $$('[data-all]').forEach(b=>b.addEventListener('click',()=>b.getAttribute('aria-disabled')=='true'?toast('Download blocked: QA not passed',1):dlAll()));
@@ -399,4 +464,35 @@ rz=requestAnimationFrame(()=>load(PROF[cur]).then(a=>{
 if(a.err||a.n)drawChart(a);
 }));
 }).observe(ch);
+
+/* == Motion == */
+document.addEventListener('visibilitychange',()=>document.documentElement.classList.toggle('hid',document.hidden));
+$('#profiles').addEventListener('animationend',e=>{
+if(e.animationName=='sweep')e.target.classList.remove('sweep');
+});
+$('#fab').addEventListener('animationend',e=>{
+if(e.animationName=='pulse')e.target.classList.remove('pulse');
+});
+const up=$('#toTop');
+up.onclick=()=>scrollTo({top:0});
+if(window.IntersectionObserver){
+new IntersectionObserver(([e])=>up.classList.toggle('show',!e.isIntersecting)).observe($('.hero'));
+if(!calm()){
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+if(e.isIntersecting||e.boundingClientRect.top<0){
+e.target.classList.add('in');
+io.unobserve(e.target);
+}
+}),{rootMargin:'0px 0px -6% 0px'});
+$$('.sec,.foot').forEach(s=>{
+if(s.getBoundingClientRect().top<innerHeight)return;
+s.classList.add('rv');
+io.observe(s);
+});
+document.documentElement.classList.add('rv-on');
+}
+}
+
+/* == Start == */
 render();
+  
