@@ -512,6 +512,10 @@ stroke-dasharray:1 1;
 animation:draw .45s var(--ease) both;
 }
 
+.wave-thin{
+animation:draw .45s var(--ease) both,drift 10s ease-in-out .45s infinite alternate;
+}
+
 .wave-back{
 animation:fi .45s var(--ease) both;
 }
@@ -547,9 +551,7 @@ font-size:clamp(4.6rem,9vw,8.5rem);
 display:flex;
 flex-wrap:wrap;
 }
-.wave-thin{
-animation:draw .45s var(--ease) both,drift 10s ease-in-out .45s infinite alternate;
-}
+
 }
 
 /* == Buttons == */
