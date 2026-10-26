@@ -3,6 +3,7 @@
 /* == Markdown == */
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
 const REPO='https://github.com/nmstudioo/HyperAudioo/blob/main/';
+const XI='<svg class="i xs" aria-hidden="true"><use href="#i-ext"/></svg>';
 const isUrl=u=>/^(https?|mailto):/i.test(u)||!/^[a-z][a-z0-9+.-]*:/i.test(u);
 const docPath=(u,base)=>{
 if(/^[a-z][a-z0-9+.-]*:|^#/i.test(u))return'';
@@ -17,9 +18,9 @@ t=t.replace(/\[([^\]]+)\]\(\s*([^)\s]+)(?:\s+"[^"]*")?\s*\)/g,(m,x,u)=>{
 if(!isUrl(u))return x;
 const d=docPath(u,base),ext=/^https?:/i.test(u);
 const href=d?REPO+d:ext||/^(mailto:|#)/i.test(u)?u:REPO+docPath(u+'.md',base).replace(/\.md$/,'');
-return hold(`<a href="${esc(href)}"${d?` data-doc="${esc(d)}"`:''}${ext?' rel="noopener" target="_blank"':''}>${inline(x,base)}</a>`);
+return hold(`<a href="${esc(href)}"${d?` data-doc="${esc(d)}"`:''}${ext?' rel="noopener" target="_blank"':''}>${inline(x,base)}${ext?XI:''}</a>`);
 });
-t=t.replace(/(^|[\s(])(https?:\/\/[^\s<)]+[^\s<).,;:])/g,(m,a,u)=>a+hold(`<a href="${esc(u)}" rel="noopener" target="_blank">${esc(u)}</a>`));
+t=t.replace(/(^|[\s(])(https?:\/\/[^\s<)]+[^\s<).,;:])/g,(m,a,u)=>a+hold(`<a href="${esc(u)}" rel="noopener" target="_blank">${esc(u)}${XI}</a>`));
 t=esc(t);
 t=t.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/(^|[^\w])__([^_]+)__(?!\w)/g,'$1<strong>$2</strong>');
 t=t.replace(/(^|[^\w*])\*([^*\s][^*]*?)\*(?![\w*])/g,'$1<em>$2</em>').replace(/(^|[^\w])_([^_\s][^_]*?)_(?![\w])/g,'$1<em>$2</em>');
@@ -160,6 +161,12 @@ const R=document.getElementById('reader');
 if(R&&R.showModal){
 const body=document.getElementById('readerBody'),pathEl=document.getElementById('readerPath'),gh=document.getElementById('readerGh'),cache={};
 let cur='',depth=0;
+const put=h=>{
+body.innerHTML=h;
+body.classList.remove('fade');
+void body.offsetWidth;
+body.classList.add('fade');
+};
 const hashDoc=()=>{
 let h='';
 try{h=decodeURIComponent(location.hash)}catch{}
@@ -179,9 +186,9 @@ const r=await fetch(p);
 if(!r.ok)throw Error('HTTP '+r.status);
 cache[p]=md(await r.text(),p);
 }
-if(cur==p)body.innerHTML=cache[p];
+if(cur==p)put(cache[p]);
 }catch(e){
-if(cur==p)body.innerHTML=`<p class="lbl">Could not load ${esc(p)} (${esc(e.message)})</p><p><a href="${REPO+esc(p)}" rel="noopener">Open on GitHub ↗</a></p>`;
+if(cur==p)put(`<p class="lbl">Could not load ${esc(p)} (${esc(e.message)})</p><p><a href="${REPO+esc(p)}" rel="noopener">Open on GitHub${XI}</a></p>`);
 }
 }
 function open(p){
@@ -218,4 +225,5 @@ R.close();
 });
 const p0=hashDoc();
 if(p0)show(p0);
-}
+  }
+  
