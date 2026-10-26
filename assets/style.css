@@ -1,13 +1,5 @@
 /* == Fonts == */
 @font-face{
-font-family:"Inter Tight";
-src:url(fonts/inter-tight.woff2) format("woff2");
-font-weight:400 700;
-font-style:normal;
-font-display:swap;
-}
-
-@font-face{
 font-family:"Geist Mono";
 src:url(fonts/geist-mono.woff2) format("woff2");
 font-weight:400 700;
@@ -32,7 +24,8 @@ font-display:swap;
 --shadow:#0003;
 --code:#0b0e0d;
 --code-fg:var(--mut);
---sans:"Inter Tight",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+--sans:"Cerebri Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+--display:"TT Rationalist","Cerebri Sans",system-ui,sans-serif;
 --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 --s1:.25rem;
 --s2:.5rem;
@@ -49,12 +42,12 @@ font-display:swap;
 --bar:4rem;
 --subnav:2.75rem;
 --hit:2.5rem;
---t-xs:.66rem;
---t-sm:.78rem;
---t-md:.875rem;
---t-lg:clamp(1rem,1.45vw,1.2rem);
---h2:clamp(1.75rem,3.6vw,2.8rem);
---h3:clamp(1.5rem,3vw,2.25rem);
+--t-xs:clamp(.66rem,.64rem + .08vw,.72rem);
+--t-sm:clamp(.78rem,.75rem + .12vw,.86rem);
+--t-md:clamp(.875rem,.84rem + .16vw,.98rem);
+--t-lg:clamp(1rem,.94rem + .35vw,1.25rem);
+--h2:clamp(1.75rem,1.25rem + 2.5vw,3rem);
+--h3:clamp(1.35rem,1.05rem + 1.5vw,2.15rem);
 --ease:cubic-bezier(.16,1,.3,1);
 color-scheme:dark;
 }
@@ -101,7 +94,7 @@ body{
 margin:0;
 background:radial-gradient(ellipse at 80% 4%,color-mix(in srgb,var(--acc) 7%,transparent),transparent 32rem),var(--bg);
 color:var(--fg);
-font:1rem/1.5 var(--sans);
+font:var(--t-md)/1.55 var(--sans);
 letter-spacing:-.012em;
 -webkit-font-smoothing:antialiased;
 overflow-x:hidden;
@@ -110,6 +103,10 @@ font-variant-numeric:tabular-nums;
 
 h1,h2,h3,p,ul{
 margin:0;
+}
+
+h1,h2,h3,.display{
+font-family:var(--display);
 }
 
 ul{
@@ -212,7 +209,7 @@ display:flex;
 align-items:center;
 gap:var(--s2);
 min-width:0;
-font:600 1rem/1 var(--sans);
+font:600 clamp(1rem,.94rem + .25vw,1.15rem)/1 var(--display);
 letter-spacing:-.04em;
 }
 
@@ -545,7 +542,8 @@ padding-top:calc(var(--bar) + var(--s7));
 padding-bottom:var(--sec);
 }
 .display{
-font-size:clamp(4.6rem,9vw,8.5rem);
+font-size:clamp(3.5rem,2.15rem + 6.75vw,8.5rem);
+font-family:var(--display);
 }
 .hero-actions{
 display:flex;
@@ -1011,7 +1009,7 @@ border-bottom:1px solid var(--line);
 display:inline-flex;
 align-items:center;
 gap:var(--s2);
-font:600 1rem var(--sans);
+font:600 var(--t-md) var(--display);
 }
 
 .chev{
@@ -1444,16 +1442,16 @@ font-size:var(--h2);
 
 .prose h2{
 margin-top:var(--s6);
-font-size:1.5rem;
+font-size:clamp(1.35rem,1.1rem + 1.25vw,1.75rem);
 }
 
 .prose h3{
 margin-top:var(--s5);
-font-size:1.2rem;
+font-size:clamp(1.15rem,1rem + .75vw,1.4rem);
 }
 
 .prose h4,.prose h5,.prose h6{
-font-size:1rem;
+font-size:var(--t-md);
 }
 
 .prose strong{
