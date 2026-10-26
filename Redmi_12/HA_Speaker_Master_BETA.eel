@@ -156,22 +156,22 @@ peqProfile != peqPrevProfile ? (
       i==3 ? (fc=9701;db=-9.4;q=2.66;);
     );
     A=10^(db/40);
-    w=2*3.141592653589793*min(fc,fs*0.45)/fs;
-    cw=cos(w); sw=sin(w);
+    peqOmega=2*3.141592653589793*min(fc,fs*0.45)/fs;
+    peqCos=cos(peqOmega); peqSin=sin(peqOmega);
     typ==0 ? (
-      alpha=sw/(2*q);
-      b0=1+alpha*A; b1=-2*cw; b2=1-alpha*A;
-      a0=1+alpha/A; a1=-2*cw; a2=1-alpha/A;
+      alpha=peqSin/(2*q);
+      b0=1+alpha*A; b1=-2*peqCos; b2=1-alpha*A;
+      a0=1+alpha/A; a1=-2*peqCos; a2=1-alpha/A;
     ) : (
       S=1/(2*q*q);
-      alpha=sw/2*sqrt((A+1/A)*(1/S-1)+2);
+      alpha=peqSin/2*sqrt((A+1/A)*(1/S-1)+2);
       beta=2*sqrt(A)*alpha;
       typ==1 ? (
-        b0=A*((A+1)-(A-1)*cw+beta);
-        b1=2*A*((A-1)-(A+1)*cw);
+        b0=A*((A+1)-(A-1)*peqCos+beta);
+        b1=2*A*((A-1)-(A+1)*peqCos);
         b2=A*((A+1)-(A-1)*cw-beta);
-        a0=(A+1)+(A-1)*cw+beta;
-        a1=-2*((A-1)+(A+1)*cw);
+        a0=(A+1)+(A-1)*peqCos+beta;
+        a1=-2*((A-1)+(A+1)*peqCos);
         a2=(A+1)+(A-1)*cw-beta;
       ) : (
         b0=A*((A+1)+(A-1)*cw+beta);
