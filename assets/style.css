@@ -1,3 +1,20 @@
+/* == Fonts == */
+@font-face{
+font-family:"Inter Tight";
+src:url(fonts/inter-tight.woff2) format("woff2");
+font-weight:400 700;
+font-style:normal;
+font-display:swap;
+}
+
+@font-face{
+font-family:"Geist Mono";
+src:url(fonts/geist-mono.woff2) format("woff2");
+font-weight:400 700;
+font-style:normal;
+font-display:swap;
+}
+
 /* == Tokens == */
 :root{
 --bg:#101214;
@@ -11,11 +28,12 @@
 --ink:#17200d;
 --ok:#a9e8ad;
 --bad:#ff9c91;
+--warn:#ffb454;
 --shadow:#0003;
 --code:#0b0e0d;
 --code-fg:var(--mut);
---sans:"Inter Tight",Inter,system-ui,sans-serif;
---mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+--sans:"Inter Tight",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+--mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 --s1:.25rem;
 --s2:.5rem;
 --s3:.75rem;
@@ -53,6 +71,7 @@ color-scheme:dark;
 --ink:#f7faef;
 --ok:#28743b;
 --bad:#b13e35;
+--warn:#9a5b00;
 --shadow:#0001;
 --code:#172019;
 --code-fg:#d5e0d4;
@@ -675,7 +694,9 @@ stroke:var(--line);
 }
 
 .gl.z{
-stroke:var(--dim);
+stroke:var(--warn);
+stroke-opacity:.7;
+stroke-dasharray:4 4;
 }
 
 .ax{
