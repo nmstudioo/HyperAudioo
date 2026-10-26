@@ -1,4 +1,4 @@
-# HyperAudio VDC Reference
+# HyperAudio VDC reference
 
 > **Purpose:** Describe the VDC/DDC assets actually shipped by HyperAudio, their verified structure, and the safe boundaries for editing or generating replacements.
 >
@@ -83,12 +83,14 @@ A file-level pass is not the same as app acceptance, device runtime verification
 - [ ] Re-test app loading after a RootlessJamesDSP update.
 - [ ] Update this document and the profile reports if either VDC changes.
 
-## Related documentation
+## Related references
 
 - [Methodology](methodology.md) — chain architecture and evidence labels.
 - [IRS reference](irs_functions.md) — correction payload format and validation.
 - [EEL2 reference](eel_functions) — Liveprog UI/parser authoring reference.
 - [Test report](test_report.md) — current validation state.
+
+---
 
 **Reference version:** 1.0  
 **Last checked against repository assets:** October 2026
