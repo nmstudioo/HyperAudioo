@@ -26,13 +26,13 @@ Built for [RootlessJamesDSP](https://github.com/ThePBone/RootlessJamesDSP).
 
 ## Overview
 
-HyperAudio maintains two device-specific correction chains. Each chain is a matched set of an identity **VDC**, a minimum-phase **IRS** carrying the tonal correction, and an **EEL2** Liveprog script.
+HyperAudio publishes two device profiles, but their deployment guidance is not identical. The KZ EDX Pro uses the identity **VDC → minimum-phase IRS → EEL2** chain. The Redmi 12 directory retains the frozen V6 three-file assets, while its current [Speaker setup guide](Redmi_12/Setting_Guide_S.md) documents a separate **standalone EEL2 PEQ** configuration. These Speaker configurations are alternatives and must not be combined.
 
 This is **not** a general-purpose preset collection. Profiles, measurements, implementation details, and test claims are scoped to the hardware and evidence actually available.
 
 | **2** device profiles | **3** files per chain | **48 kHz** IRS host rate | **1** tonal-correction stage |
 |:--:|:--:|:--:|:--:|
-| Speaker + IEM | VDC · IRS · EEL2 | Verify the running rate | IRS only |
+| 2 device profiles | Profile-specific assets | Verify the running rate | No duplicated EQ |
 
 See [methodology](docs/methodology.md) for the evidence model and processing rationale.
 
@@ -48,9 +48,9 @@ See [methodology](docs/methodology.md) for the evidence model and processing rat
 
 **8192-tap · 48 kHz IRS**
 
-Transparent post-IRS limiter. No additional EQ, bass synthesis, or stereo processing in the terminal stage.
+**Important configuration split:** the guide is for standalone Liveprog PEQ + limiter. It explicitly replaces the older VDC → IRS → limiter chain; do not load the VDC or IRS with this guide. The frozen V6 three-file assets remain in the repository and are documented separately in the technical report.
 
-[Setting guide](Redmi_12/Setting_Guide_S.md) · [Technical report](Redmi_12/report_Redmi_12.md)
+[Standalone setting guide](Redmi_12/Setting_Guide_S.md) · [V6 technical report](Redmi_12/report_Redmi_12.md)
 
 </td>
 <td width="50%" valign="top">
@@ -71,7 +71,7 @@ Selectable Effects or Limiter-only paths. The IEM voicing is a labelled design c
 
 ## Processing architecture
 
-One correction stage. Three components.
+The following is the three-file architecture used by the IEM profile and the frozen Speaker V6 asset set. **It is not the current standalone Speaker PEQ guide configuration.**
 
 ```mermaid
 flowchart LR
@@ -85,10 +85,11 @@ flowchart LR
 
 ## Quick start
 
-1. **Set the host rate to 48 kHz.** Both IRS files are authored for 48 kHz. Verify the rate actually running in RootlessJamesDSP.
-2. **Disable other processing.** Turn off other EQ, bass enhancement, and OEM sound effects.
-3. **Load the chain in order:** DDC (`.vdc`) → Convolver (`.irs`, preamp **0 dB**) → Liveprog (`.eel`).
-4. **Start at low volume** and confirm the selected profile and processing mode.
+1. **Choose the correct profile guide first.** The IEM guide uses the three-file chain below. The Speaker guide uses standalone Liveprog PEQ and explicitly excludes its VDC and IRS files.
+2. For the IEM chain, set the host rate to **48 kHz**, verify the running rate, and set convolver preamp to **0 dB**.
+3. Disable other EQ, bass enhancement, and OEM sound effects that would stack processing.
+4. Load the IEM chain in order: DDC (`.vdc`) → Convolver (`.irs`) → Liveprog (`.eel`). For the Speaker, follow [its standalone guide](Redmi_12/Setting_Guide_S.md) instead.
+5. **Start at low volume** and confirm the selected profile and processing mode.
 
 <table>
 <tr>
@@ -136,16 +137,18 @@ edx_pro/
 
 | Reference | Purpose | Read |
 |---|---|---|
-| [VDC functions](docs/vdc_functions.md) | Shipped VDC structure and evidence boundaries | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/vdc_functions.md) |
+| [VDC reference](docs/vdc_functions.md) | Shipped VDC structure and evidence boundaries | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/vdc_functions.md) |
 | [IRS functions](docs/irs_functions.md) | IRS format, metrics, and validation | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/irs_functions.md) |
-| [EEL2 functions](docs/eel_functions) | VM syntax, parser constraints, and implementation guidance | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/eel_functions) |
-| [System reference](docs/system_full.md) | Current architecture, profile state, operation, evidence, and limitations | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/system_full.md) |\n| [Methodology](docs/methodology.md) | Synthesis, gating, and evidence method | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/methodology.md) |
+| [EEL2 functions](docs/eel_functions.md) | VM syntax, parser constraints, and implementation guidance | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/eel_functions.md) |
+| [System reference](docs/system_full.md) | Current architecture, profile state, operation, evidence, and limitations | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/system_full.md) |
+| [Methodology](docs/methodology.md) | Synthesis, gating, and evidence method | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/methodology.md) |
 | [Test report](docs/test_report.md) | Results, scope, and open questions | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/test_report.md) |
 | [Speaker setup](Redmi_12/Setting_Guide_S.md) | Redmi 12 installation instructions | [Site](https://nmstudioo.github.io/HyperAudioo/#read/Redmi_12/Setting_Guide_S.md) |
 | [IEM setup](edx_pro/Setting_Guide_IEM.md) | KZ EDX Pro installation instructions | [Site](https://nmstudioo.github.io/HyperAudioo/#read/edx_pro/Setting_Guide_IEM.md) |
 | [Speaker report](Redmi_12/report_Redmi_12.md) | Speaker-chain numerical report | [Site](https://nmstudioo.github.io/HyperAudioo/#read/Redmi_12/report_Redmi_12.md) |
 | [IEM report](edx_pro/report_EDX_HA.md) | IEM-chain numerical report | [Site](https://nmstudioo.github.io/HyperAudioo/#read/edx_pro/report_EDX_HA.md) |
 | [Attribution](ATTRIBUTION.md) | Third-party sources and credits | [Site](https://nmstudioo.github.io/HyperAudioo/#read/ATTRIBUTION.md) |
+| [License notes](LICENSE.md) | Project license scope and notices | [GitHub](LICENSE.md) |
 
 ### Verification harnesses
 
@@ -216,10 +219,12 @@ HyperAudioo/
 ├── LICENSE
 ├── LICENSE-MIT
 ├── LICENSE-CC-BY-SA-4.0
+├── LICENSE.md
 ├── Redmi_12/
 │   ├── HA_Speaker_Master.vdc
 │   ├── HA_Speaker_Master.irs
 │   ├── HA_Speaker_Master.eel
+│   ├── HA_Speaker_Master_BETA.eel
 │   ├── Setting_Guide_S.md
 │   └── report_Redmi_12.md
 ├── edx_pro/
@@ -231,7 +236,8 @@ HyperAudioo/
 ├── docs/
 │   ├── vdc_functions.md
 │   ├── irs_functions.md
-│   ├── eel_functions
+│   ├── eel_functions.md
+│   ├── system_full.md
 │   ├── methodology.md
 │   └── test_report.md
 ├── assets/
