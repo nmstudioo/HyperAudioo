@@ -1,5 +1,21 @@
 /* == Fonts == */
 @font-face{
+font-family:"Space Grotesk";
+src:url(fonts/space-grotesk-variable.ttf) format("truetype");
+font-weight:300 700;
+font-style:normal;
+font-display:swap;
+}
+
+@font-face{
+font-family:"DM Sans";
+src:url(fonts/dm-sans-variable.ttf) format("truetype");
+font-weight:100 1000;
+font-style:normal;
+font-display:swap;
+}
+
+@font-face{
 font-family:"Geist Mono";
 src:url(fonts/geist-mono.woff2) format("woff2");
 font-weight:400 700;
@@ -24,8 +40,8 @@ font-display:swap;
 --shadow:#0003;
 --code:#0b0e0d;
 --code-fg:var(--mut);
---sans:"Cerebri Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
---display:"TT Rationalist","Cerebri Sans",system-ui,sans-serif;
+--sans:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+--display:"Space Grotesk","DM Sans",system-ui,sans-serif;
 --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 --s1:.25rem;
 --s2:.5rem;
@@ -366,7 +382,7 @@ box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 14%,transparent);
 
 .display{
 margin:var(--s5) 0;
-font:500 clamp(3.75rem,15vw,7rem)/.9 var(--sans);
+font:500 clamp(3.75rem,15vw,7rem)/.9 var(--display);
 letter-spacing:-.06em;
 }
 
