@@ -1,17 +1,33 @@
-desc: HyperAudio V6 IRS Core
-//tags: hyperaudio v6-irs transparent linked-lookahead-limiter
+desc: HyperAudio Speaker PEQ + Limiter
+//tags: hyperaudio speaker standalone-peq linked-lookahead-limiter
+// Version: HyperAudio Speaker PEQ V1.0
 //author: HyperAudio
-// Post-IRS protection stage for Speaker HA 48k v6.irs.
-// No EQ, bass synthesis, high-pass filter, stereo widening, or tonal shaping.
+// Standalone Speaker processing. Use this EEL by itself.
+// Do NOT load the Speaker DDC/VDC or IRS/convolver with this setup.
+// Select exactly one optional PEQ profile, or Off for limiter-only operation.
+// PEQ profile preamps are included to preserve the exported profile headroom.
 
 master:1<0,1,1{Bypass,Protect}>Processing
+peqProfile:0<0,3,1{Off,Fusion Hybrid,Equilibrium,Stellar Master}>Speaker PEQ Profile
 inputGain10:0<-120,60,1>Input Gain tenths dB
 ceiling10:-30<-120,0,1>Peak Ceiling tenths dBFS
 releaseMs:80<20,300,1>Release ms
 
 @init
-// Explicit UI defaults. Fixed 48-sample lookahead at the 48 kHz target rate.
 master = 1;
+peqProfile = 0;
+peqPrevProfile = -1;
+peqCount = 0;
+
+peqMem = 20000;
+peqX1L = peqMem; peqX2L = peqX1L + 10;
+peqY1L = peqX2L + 10; peqY2L = peqY1L + 10;
+peqX1R = peqY2L + 10; peqX2R = peqX1R + 10;
+peqY1R = peqX2R + 10; peqY2R = peqY1R + 10;
+peqB0 = peqY2R + 10; peqB1 = peqB0 + 10;
+peqB2 = peqB1 + 10; peqA1 = peqB2 + 10; peqA2 = peqA1 + 10;
+peqPre = 1.0;
+
 inputGain10 = 0;
 ceiling10 = -30;
 releaseMs = 80;
@@ -20,7 +36,7 @@ fs = srate > 0 ? srate : 48000;
 LA = 48;
 N = LA + 1;
 
-// Block prefix/suffix minima and stereo delay storage.
+// Limiter storage. PEQ state/coefficient memory starts at 20000.
 mem = 10000;
 buf_curr = mem;
 suf_min = buf_curr + N;
@@ -55,18 +71,17 @@ prevCeiling10 = ceiling10;
 prevReleaseMs = releaseMs;
 
 @sample
-// Input validation also catches NaN and infinities.
 xL = spl0;
 xR = spl1;
 abs(xL) < 1e6 ? 0 : (xL = 0.0);
 abs(xR) < 1e6 ? 0 : (xR = 0.0);
 
 master == 0 ? (
-  // True bypass: no gain, delay, limiter, or output clamp.
+  // True bypass: no PEQ, gain, delay, limiter, or output clamp.
   spl0 = xL;
   spl1 = xR;
 ) : (
-  // Clear stale delay/history when returning from true bypass.
+  // Reset limiter history after leaving true bypass.
   prevMaster == 0 ? (
     i = 0;
     loop(N + 1,
@@ -85,7 +100,92 @@ master == 0 ? (
     limGain = 1.0;
   );
 
-  // Parameter updates.
+  // Rebuild coefficients and clear filter history only when profile changes.
+  peqProfile != peqPrevProfile ? (
+    peqPrevProfile = peqProfile;
+    i = 0;
+    loop(10,
+      peqX1L[i]=0; peqX2L[i]=0; peqY1L[i]=0; peqY2L[i]=0;
+      peqX1R[i]=0; peqX2R[i]=0; peqY1R[i]=0; peqY2R[i]=0;
+      i += 1;
+    );
+    peqCount = 0;
+    peqPre = 1.0;
+    peqProfile == 1 ? (peqCount=10; peqPre=10^(-7.5/20););
+    peqProfile == 2 ? (peqCount=9; peqPre=10^(-7.2/20););
+    peqProfile == 3 ? (peqCount=4; peqPre=10^(-0.1/20););
+
+    i=0;
+    loop(peqCount,
+      typ=0; fc=1000; db=0; q=0.707;
+      peqProfile == 1 ? (
+        i==0 ? (typ=1;fc=75;db=6.5;q=0.55;);
+        i==1 ? (fc=180;db=2.8;q=0.90;);
+        i==2 ? (fc=480;db=6.8;q=0.70;);
+        i==3 ? (fc=1350;db=-7.2;q=1.40;);
+        i==4 ? (fc=2150;db=-9.5;q=2.10;);
+        i==5 ? (fc=2700;db=2.2;q=2.00;);
+        i==6 ? (fc=3300;db=-10.5;q=2.80;);
+        i==7 ? (fc=5700;db=-6.8;q=2.60;);
+        i==8 ? (fc=8200;db=-6.5;q=2.20;);
+        i==9 ? (typ=2;fc=10500;db=-5.5;q=0.70;);
+      );
+      peqProfile == 2 ? (
+        i==0 ? (typ=1;fc=80;db=7.0;q=0.55;);
+        i==1 ? (fc=170;db=3.0;q=0.85;);
+        i==2 ? (fc=480;db=6.5;q=0.75;);
+        i==3 ? (fc=2050;db=-8.8;q=2.10;);
+        i==4 ? (fc=2700;db=2.4;q=2.00;);
+        i==5 ? (fc=3280;db=-9.5;q=3.20;);
+        i==6 ? (fc=6300;db=-7.5;q=2.00;);
+        i==7 ? (fc=9750;db=-10.0;q=2.20;);
+        i==8 ? (typ=2;fc=12000;db=-3.5;q=0.70;);
+      );
+      peqProfile == 3 ? (
+        i==0 ? (fc=2041;db=-9.8;q=3.05;);
+        i==1 ? (fc=3293;db=-8.1;q=5.20;);
+        i==2 ? (fc=6496;db=-8.2;q=1.70;);
+        i==3 ? (fc=9701;db=-9.4;q=2.66;);
+      );
+
+      A=10^(db/40);
+      peqOmega=2*3.141592653589793*min(fc,fs*0.45)/fs;
+      peqCos=cos(peqOmega);
+      peqSin=sin(peqOmega);
+
+      typ==0 ? (
+        alpha=peqSin/(2*q);
+        b0=1+alpha*A; b1=-2*peqCos; b2=1-alpha*A;
+        a0=1+alpha/A; a1=-2*peqCos; a2=1-alpha/A;
+      ) : (
+        // RBJ shelf slope mapping from the exported Q field.
+        S=1/(2*q*q);
+        alpha=peqSin/2*sqrt((A+1/A)*(1/S-1)+2);
+        beta=2*sqrt(A)*alpha;
+        typ==1 ? (
+          b0=A*((A+1)-(A-1)*peqCos+beta);
+          b1=2*A*((A-1)-(A+1)*peqCos);
+          b2=A*((A+1)-(A-1)*peqCos-beta);
+          a0=(A+1)+(A-1)*peqCos+beta;
+          a1=-2*((A-1)+(A+1)*peqCos);
+          a2=(A+1)+(A-1)*peqCos-beta;
+        ) : (
+          b0=A*((A+1)+(A-1)*peqCos+beta);
+          b1=-2*A*((A-1)+(A+1)*peqCos);
+          b2=A*((A+1)+(A-1)*peqCos-beta);
+          a0=(A+1)-(A-1)*peqCos+beta;
+          a1=2*((A-1)-(A+1)*peqCos);
+          a2=(A+1)-(A-1)*peqCos-beta;
+        );
+      );
+
+      peqB0[i]=b0/a0; peqB1[i]=b1/a0; peqB2[i]=b2/a0;
+      peqA1[i]=a1/a0; peqA2[i]=a2/a0;
+      i+=1;
+    );
+  );
+
+  // Live parameter updates.
   inputGain10 != prevInputGain10 ? (
     prevInputGain10 = inputGain10;
     preGain = pow(10.0, inputGain10 / 200.0);
@@ -101,25 +201,36 @@ master == 0 ? (
     releaseCoeff = 1.0 - exp(-1.0 / (fs * rm));
   );
 
-  // Unity gain by default; optional user gain is in 0.1 dB steps.
   pL = xL * preGain;
   pR = xR * preGain;
+
+  // One selected PEQ profile only. Off skips both filters and profile preamp.
+  peqProfile > 0 ? (
+    pL *= peqPre;
+    pR *= peqPre;
+    i=0;
+    loop(peqCount,
+      yL=peqB0[i]*pL + peqB1[i]*peqX1L[i] + peqB2[i]*peqX2L[i] - peqA1[i]*peqY1L[i] - peqA2[i]*peqY2L[i];
+      peqX2L[i]=peqX1L[i]; peqX1L[i]=pL; peqY2L[i]=peqY1L[i]; peqY1L[i]=yL;
+      yR=peqB0[i]*pR + peqB1[i]*peqX1R[i] + peqB2[i]*peqX2R[i] - peqA1[i]*peqY1R[i] - peqA2[i]*peqY2R[i];
+      peqX2R[i]=peqX1R[i]; peqX1R[i]=pR; peqY2R[i]=peqY1R[i]; peqY1R[i]=yR;
+      pL=yL; pR=yR;
+      i+=1;
+    );
+  );
+
   abs(pL) < 1e6 ? 0 : (pL = 0.0);
   abs(pR) < 1e6 ? 0 : (pR = 0.0);
 
-  // Linked instantaneous gain request.
+  // Stereo-linked look-ahead limiter: 48 samples, instant attack, exponential release.
   pk = max(abs(pL), abs(pR));
   g_inst = pk > ceiling ? ceiling / pk : 1.0;
   g_inst = min(max(g_inst, 0.0), 1.0);
 
-  // O(1) amortized minimum over the 49-sample lookahead window.
-  // suf_min[w+1] covers the preceding block's remaining suffix;
-  // curr_pref_min covers the current block from index 0 through w.
   buf_curr[w] = g_inst;
   curr_pref_min = min(curr_pref_min, g_inst);
   reqG = min(suf_min[w + 1], curr_pref_min);
 
-  // Instant attack, exponential release.
   reqG < limGain ? (
     limGain = reqG;
   ) : (
@@ -127,7 +238,6 @@ master == 0 ? (
   );
   limGain = min(max(limGain, 0.0), 1.0);
 
-  // Read audio delayed by exactly 48 samples, then write current audio.
   rd = w + 1;
   rd >= N ? rd = 0;
   outL = dlyL[rd] * limGain;
@@ -136,7 +246,6 @@ master == 0 ? (
   dlyR[w] = pR;
   w = rd;
 
-  // At each block boundary, prepare suffix minima for the block just filled.
   w == 0 ? (
     temp_min = buf_curr[N - 1];
     suf_min[N - 1] = temp_min;
@@ -150,7 +259,6 @@ master == 0 ? (
     curr_pref_min = 1.0;
   );
 
-  // Periodic denormal cleanup.
   ctl += 1;
   ctl >= 1024 ? (
     ctl = 0;
@@ -159,7 +267,6 @@ master == 0 ? (
     abs(dlyR[w]) < 1e-30 ? dlyR[w] = 0.0;
   );
 
-  // Final numerical guard and sample-peak ceiling.
   abs(outL) < 1e6 ? 0 : (outL = 0.0);
   abs(outR) < 1e6 ? 0 : (outR = 0.0);
   spl0 = min(max(outL, -ceiling), ceiling);
