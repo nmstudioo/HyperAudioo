@@ -139,7 +139,7 @@ edx_pro/
 | [VDC functions](docs/vdc_functions.md) | Shipped VDC structure and evidence boundaries | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/vdc_functions.md) |
 | [IRS functions](docs/irs_functions.md) | IRS format, metrics, and validation | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/irs_functions.md) |
 | [EEL2 functions](docs/eel_functions) | VM syntax, parser constraints, and implementation guidance | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/eel_functions) |
-| [Methodology](docs/methodology.md) | Synthesis, gating, and evidence method | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/methodology.md) |
+| [System reference](docs/system_full.md) | Current architecture, profile state, operation, evidence, and limitations | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/system_full.md) |\n| [Methodology](docs/methodology.md) | Synthesis, gating, and evidence method | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/methodology.md) |
 | [Test report](docs/test_report.md) | Results, scope, and open questions | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/test_report.md) |
 | [Speaker setup](Redmi_12/Setting_Guide_S.md) | Redmi 12 installation instructions | [Site](https://nmstudioo.github.io/HyperAudioo/#read/Redmi_12/Setting_Guide_S.md) |
 | [IEM setup](edx_pro/Setting_Guide_IEM.md) | KZ EDX Pro installation instructions | [Site](https://nmstudioo.github.io/HyperAudioo/#read/edx_pro/Setting_Guide_IEM.md) |
