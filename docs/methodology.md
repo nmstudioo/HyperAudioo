@@ -56,6 +56,14 @@ A JamesDSP VM built from the pinned source runs each script on raw float32 stere
 
 **Experimental → Numerically qualified → Device-tested → Production-approved.** "Numerically qualified" never implies device testing or listening.
 
+## Format references
+
+- [VDC reference](vdc_functions.md)
+- [IRS reference](irs_functions.md)
+- [EEL2 reference](eel_functions)
+
+File inspection and offline numerical qualification do not by themselves prove native app acceptance, ARM runtime behaviour, or acoustic performance.
+
 ## 7 · Rules
 
 Frozen references are never modified. Every claim carries a label. Predicted ≠ measured. Voicing choices are labelled as design choices.
