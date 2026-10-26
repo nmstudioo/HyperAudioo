@@ -43,7 +43,7 @@ For a reliable RootlessJamesDSP Liveprog script:
 - Avoid `@` in comments before `@init`.
 - Keep labels free of `:`, `(`, `)`, and `%`.
 - Guard `srate` with a fallback value.
-- Guard non-finite or extreme input samples.
+- Guard non-finite or extreme input samples with the VM-tested conditional assignment shown below; do not use the negated comparison form for NaN handling.
 - Clamp the final output to the intended ceiling.
 - Keep per-sample processing bounded and inexpensive on low-power Android devices.
 
@@ -61,14 +61,27 @@ level = level10 / 10;
 fs = srate > 0 ? srate : 48000;
 
 @sample
-!(abs(spl0) < 1e6) ? spl0 = 0;
-!(abs(spl1) < 1e6) ? spl1 = 0;
+abs(spl0) < 1e6 ? 0 : (spl0 = 0.0);
+abs(spl1) < 1e6 ? 0 : (spl1 = 0.0);
 
 spl0 = min(max(spl0, -1), 1);
 spl1 = min(max(spl1, -1), 1);
 ```
 
 ---
+
+### Non-finite input guard — important VM-specific correction
+
+Use this form in the input stage:
+
+```eel
+abs(spl0) < 1e6 ? 0 : (spl0 = 0.0);
+abs(spl1) < 1e6 ? 0 : (spl1 = 0.0);
+```
+
+The earlier form `!(abs(x) < 1e6) ? x = 0;` is **not** a safe NaN guard in the tested JamesDSP VM: the EDX Pro report records that it failed to catch NaN. The conditional-assignment form above was tested successfully in that VM and replaces the earlier example. For finite samples with magnitude below the threshold, the true branch is a no-op; non-finite values and finite magnitudes at or above the threshold take the assignment branch.
+
+This is a VM-specific tested observation, not a guarantee for every EEL2 host or future app version. Re-run NaN, positive/negative infinity, large finite input, and post-event recovery tests against the exact shipped script. The Speaker report still marks its corrected-source non-finite rerun as `NOT RUN`; do not promote that row to PASS without a new test.
 
 ## Verified script examples
 
@@ -473,8 +486,8 @@ fs = srate > 0 ? srate : 48000;
 Guard input samples before processing:
 
 ```eel
-!(abs(spl0) < 1e6) ? spl0 = 0;
-!(abs(spl1) < 1e6) ? spl1 = 0;
+abs(spl0) < 1e6 ? 0 : (spl0 = 0.0);
+abs(spl1) < 1e6 ? 0 : (spl1 = 0.0);
 ```
 
 ### Output clamp
@@ -619,8 +632,8 @@ PI2 = 2 * $PI;
 
 @sample
 // Input guard
-!(abs(spl0) < 1e6) ? spl0 = 0;
-!(abs(spl1) < 1e6) ? spl1 = 0;
+abs(spl0) < 1e6 ? 0 : (spl0 = 0.0);
+abs(spl1) < 1e6 ? 0 : (spl1 = 0.0);
 
 // Pass-through demonstration
 switchOn ? (
