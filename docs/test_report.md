@@ -25,6 +25,13 @@ Consolidated results and open questions. Environment: source-built JamesDSP VM (
 - Other listed results retain their previously recorded scope; this edit does not claim a new VM test run. The v5 processing-mode selector is new and remains untested in the VM, app and on ARM.
 - An early report cited the wrong upstream source revision; the relevant code was identical, and the pin was corrected.
 
+## Documentation cross-check
+
+- `docs/vdc_functions.md` records the two shipped identity VDC payloads and explicitly limits claims about arbitrary non-identity VDC syntax.
+- `docs/irs_functions.md` records the shipped RIFF float32 stereo assets, project QA limits, profile-specific tail metrics, and the boundary between offline FIR checks and native-app/device validation.
+- `docs/eel_functions` now uses the conditional-assignment NaN guard documented in `docs/methodology.md` and the EDX Pro report. The older negated-comparison example was removed because it did not catch NaN in the tested VM.
+- This documentation update does not constitute a new DSP test run. In particular, the Speaker corrected-source NaN/Inf/large-input rerun and the IEM v5 mode-selector VM regression remain `NOT RUN`.
+
 ## Open questions
 
 1. **Measurement provenance** for the speaker IRS (mic response inside the filter?).
