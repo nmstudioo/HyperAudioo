@@ -134,6 +134,10 @@ flowchart LR
 
 ## Documentation
 
+- [VDC reference](docs/vdc_functions.md)
+- [IRS reference](docs/irs_functions.md)
+- [EEL2 reference](docs/eel_functions)
+
 | Document | Read on the site | Source |
 |---|---|---|
 | Methodology | [Open](https://nmstudioo.github.io/HyperAudioo/#read/docs/methodology.md) | [`docs/methodology.md`](docs/methodology.md) |
