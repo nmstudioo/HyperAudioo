@@ -1,10 +1,10 @@
-# RootlessJamesDSP EEL2 UI Control Reference
+# RootlessJamesDSP EEL2 authoring reference
 
-> **Purpose:** A practical, device-verified reference for generating Liveprog EEL2 scripts with reliable RootlessJamesDSP controls.
+> **Purpose:** A practical reference for authoring Liveprog EEL2 scripts and UI controls for RootlessJamesDSP.
 >
 > **Scope:** UI parameter grammar, parser behavior, script structure, known pitfalls, and a reusable authoring checklist.
 >
-> **Verification status:** The behaviors documented here were observed from working `.eel` scripts loaded in RootlessJamesDSP on Android, including bundled and HyperAudio-authored scripts. Host-version and device-specific differences may still exist.
+> **Evidence boundary:** The parser and UI behaviors below are based on observed working scripts and VM/device observations recorded by the project. They are not a guarantee for every app version, device, or EEL2 host. Profile-specific test status is maintained in the [test report](test_report.md).
 
 ---
 
@@ -838,3 +838,39 @@ This reference was developed through hands-on testing with RootlessJamesDSP on A
 
 **Reference version:** 1.0  
 **Last verified:** October 2026
+
+
+---
+
+## HyperAudio profile integration notes
+
+The current repository architecture assigns distinct responsibilities:
+
+| Stage | Current profile role | Authoring implication |
+|---|---|---|
+| VDC / DDC | Identity filterbank | Do not add a duplicate static EQ here. |
+| IRS convolver | Sole static tonal-correction stage | Keep EEL2 from silently recreating the IRS curve. |
+| EEL2 Liveprog | Operational processing | Gain trim, limiter, bypass, and explicitly optional effects. |
+
+The current profile files and their versions are listed in the repository [README](../README.md). The Speaker and IEM setup guides describe their respective operating controls; do not assume their configurations are interchangeable.
+
+### Current validation caveats
+
+- The EEL2 VM evidence is x86_64 and does not establish native ARM performance or app acceptance.
+- Speaker corrected-source non-finite-input rerun remains **NOT RUN**.
+- The IEM v5 Effects / Limiter-only selector remains **NOT RUN** in the VM and app.
+- Static slider-regex checks are **CONDITIONAL**, not proof of the live app parser.
+- CPU, thermal behaviour, audio dropouts, and long-duration playback require target-device testing.
+
+See [methodology](methodology.md), [test report](test_report.md), [Redmi 12 report](../Redmi_12/report_Redmi_12.md), and [EDX Pro report](../edx_pro/report_EDX_HA.md).
+
+## Reference maintenance
+
+When a shipped EEL script changes:
+
+1. Record the exact script revision and SHA-256.
+2. Re-check parameter declarations, integer steps, defaults, enum labels, and UI visibility.
+3. Run compile/load, bypass, effects-off, ceiling, non-finite-input, and recovery tests as applicable.
+4. Keep VM, app, ARM, device, and listening evidence separate.
+5. Update the relevant profile report and [test report](test_report.md).
+6. Do not mark a test passed because the source merely looks correct.
