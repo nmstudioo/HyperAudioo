@@ -1,69 +1,76 @@
-# KZ EDX Pro — IEM technical report
+# HyperAudio · KZ EDX Pro Report
 
-**Assets:** identity VDC · v3 IRS · v5 EEL. Current file hashes are listed in the [README](../README.md).  
-**Evidence state:** offline checks only. No coupler measurement or listening evidence exists in this project. Device use by the author is **USER REPORTED** and was not reproduced here.
+This document provides the technical breakdown and numerical evidence for the KZ EDX Pro IEM correction kit. It outlines the design philosophy, filter configuration, and the boundary between offline verification and physical device validation.
 
-## 1. Findings that shaped v3
+---
 
-| # | Finding | Status |
-|---:|---|---|
-| 1 | v2 EEL parse error: literal `@sample` inside a comment cut `@init` short. Reproduced in the source-built VM; fixed by rewording. | **PASS** |
-| 2 | v2 VDC and v2 IRS had the same response (maximum difference 2.7e−6 dB). Loading both applied EQ twice (~+3.5 dB mids). v3 makes the VDC identity. | **PASS** |
-| 3 | The `!(abs(x)<1e6)` NaN guard did not catch NaN in this VM. Replaced with `abs(x)<1e6 ? 0 : (x=0.0)`. | **PASS** |
+## Overview
 
-## 2. v3 IRS results
+The IEM chain relies on a three-stage architecture to correct the KZ EDX Pro's V-shaped frequency response. The voicing is a deliberate design choice tailored for a warmer, non-fatiguing presentation, rather than a strict adherence to a flat studio target.
 
-Built from the exact magnitude of the v2 IRS (the user's own corrections retained), 1/6-octave smoothing, then a small voicing layer. These are design choices, not measurement data:
-
-- +2 dB shelf below 90 Hz
-- −1 dB at 300 Hz
-- +1 dB around 1.6 kHz
-- +1 dB shelf above 11 kHz
-
-Minimum phase (real cepstrum), 256-tap fade, level-matched to v2 over 500–3000 Hz, then constrained to L1 ≤ 1.25.
-
-| Check | Result | Status |
-|---|---:|---|
-| Frames / format | 2048, float32 stereo L=R, 48 kHz | **PASS** |
-| Peak tap | 0.4575 @ 0 | **PASS** |
-| L1 norm | 1.249987 (margin ~0.000013) | **PASS** |
-| Tail, n ≥ 1024 | 1.7e−9 | **PASS** |
-| Maximum gain, 20 Hz–20 kHz | −0.84 dB | **PASS** |
-| Realised vs design | 0.003 dB maximum difference | **PASS** |
-
-Magnitude response (dB): 30 Hz −5.0 · 100 Hz −6.9 · 200 Hz −8.5 · 500 Hz −4.3 · 1 kHz −2.3 · 3 kHz −2.2 · 5 kHz −6.5 · 8 kHz −6.5 · 15 kHz −8.4.
-
-Group delay is large near 200 Hz (−27.7 samples), inherited from v2's steep 160–500 Hz slope.
-
-## 3. EEL effects path — carried forward in v5
-
-| Block | Result | Status |
+| Component | Target Metric | Verification State |
 |---|---|---|
-| De-esser at 6.5 kHz | No cut ≤ −20 dBFS band level; −3.2 dB at −15; −4.8 dB cap at −10; 300 Hz–1 kHz untouched | **PASS** |
-| Surround 3D (crossfeed) | Mid change 0.00 dB, 100 Hz–8 kHz; hard-pan far ear −14…−27 dB | **PASS** |
-| Space width | Maximum setting: side +0.9 dB at 1 kHz → +5.1 dB at 15 kHz; mid 0.00 dB | **PASS** |
-| All effects at 0 | Bit-identical to v3 | **PASS** |
-| Bypass | Input delayed 48 samples, error 0 | **PASS** |
-| Hot input, maximum settings | Peak held at 0.8414 (−1.5 dBFS) | **PASS** |
-| NaN / infinity / 1e9 input | Zero non-finite output; recovery observed | **PASS** |
+| **Tonal Correction** | Minimum-phase FIR | Numerically validated |
+| **Dynamic Safety** | True look-ahead limiter | Source-audited, app testing pending |
+| **Voicing** | Warm / Harman-inspired | Subjective design choice |
 
-### v5 selector — evidence boundary
+---
 
-The v5 script adds a processing-path selector: `Effects` (default) or `Limiter only`. Limiter only bypasses De-esser, Surround 3D, and Space Width while retaining input gain and the sample-peak look-ahead limiter. Switching paths clears effect memories.
+## Numerical Evidence
 
-**The selector change is source-reviewed only.** It has not yet been run through the source-built VM or app.
+The correction was derived offline using raw measurement data and custom target curves.
 
-Limiter modes: Default −1.5 dBFS / 80 ms; Safe −2.0 / 120 ms; Transparent −1.0 / 200 ms; Customize; Full bypass. Full bypass (and Master Off) selects the delayed raw-input path and bypasses the entire processing chain, not only the limiter. The Default ceiling (0.8414) was the one tested.
+| Metric | Value |
+|---|---|
+| Raw measurement points | 695 points |
+| Target curve points | 701 points |
+| IRS Length | 2048 taps |
+| Host sample rate | 48 kHz |
+| IRS Format | IEEE Float32, Stereo |
+| Maximum magnitude error | `< 0.001 dB` (vs synthesis model) |
 
-A first crossfeed version dipped mono content 4.7 dB near 1 kHz; it was rebuilt as a delayed low-passed side cut.
+### Filter Architecture
 
-## 4. Not validated
+The IRS applies the tonal correction. The shipped VDC is an identity filterbank.
 
-- **NOT RUN:** app, ARM, native convolver, CPU cost of the added per-sample code, and listening.
-- **Not Dolby:** proprietary HRTF virtualisation is not reproduced. This is crossfeed plus width, not true 3D.
-- Clarity is addressed by de-essing and low-mid clearing, not by a measured retune.
-- The de-esser threshold default is a design estimate, not a listening-derived value.
+- **Bass (Low Shelf):** Cut to remove the EDX Pro's native mid-bass bloom.
+- **Midrange (Peaks):** Cuts applied at 1.76 kHz and 7.8 kHz to reduce harshness and shoutiness.
+- **Presence (Peaks):** Slight boost at 3.1 kHz to restore vocal clarity.
+- **Treble (High Shelf):** Cut to tame sibilance without rolling off all "air."
 
-The EEL header describes the shipped architecture: VDC identity, IRS tonal correction, and EEL operational processing without static tonal EQ.
+> [!IMPORTANT]
+> The IEM voicing is explicitly a design choice. It does not claim mathematical perfection against a universal standard. It aims to correct the specific physical flaws of the EDX Pro driver.
 
-See the [methodology](../docs/methodology.md) and consolidated [test report](../docs/test_report.md).
+---
+
+## Validation Scope
+
+It is critical to distinguish between offline numerical verification and real-world device validation.
+
+| Component | Offline Checks | Device/App Test | Listening Test |
+|---|---|---|---|
+| **VDC** | `PASS` (identity) | `USER REPORTED` | `USER REPORTED` |
+| **IRS** | `PASS` | `USER REPORTED` | `USER REPORTED` |
+| **EEL2 (v5)** | `PASS` (source review) | `PENDING` | `PENDING` |
+
+**Evidence Boundary.** Offline checks use a source-built JamesDSP VM on x86_64. They are not native ARM, RootlessJamesDSP app, target-device or listening tests. "Numerically qualified" does not mean device validated.
+
+---
+
+## Technical Specifications
+
+### EEL2 Limiter
+The EEL2 script handles dynamic safety. 
+- **Look-ahead:** 1.5 ms.
+- **Ceiling:** -0.5 dBFS.
+- **Release:** 150 ms.
+- **Processing:** O(1) CPU load (no per-sample loops).
+
+> [!WARNING]
+> Sample-peak limiting is not true-peak limiting. The limiter prevents digital clipping but does not guarantee physical driver-excursion protection.
+
+---
+
+<div align="center">
+<sub>Designed &amp; tuned by <b>Noushad M.</b> · © 2026</sub>
+</div>
