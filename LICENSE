@@ -1,12 +1,35 @@
-HyperAudio repository licensing summary
+# HyperAudio · License Summary
 
-Code files (including EEL2 scripts) are licensed under the MIT License.
-See LICENSE-MIT.
+HyperAudio uses a split-license model to clearly separate the code from the audio artifacts.
 
-Audio and correction artifacts (.irs, .vdc) and project reports are
-licensed under the Creative Commons Attribution-ShareAlike 4.0
-International Public License, to the extent the project has rights to
-license them. See LICENSE-CC-BY-SA-4.0.
+---
 
-Third-party data provenance and licensing qualifications are documented
-in ATTRIBUTION.md.
+## License Scope
+
+| Scope | License | File |
+|---|---|---|
+| **EEL2 Code** (`.eel`) | MIT | [LICENSE-MIT](LICENSE-MIT) |
+| **Audio Artifacts** (`.irs`, `.vdc`) and Reports | CC BY-SA 4.0 | [LICENSE-CC-BY-SA-4.0](LICENSE-CC-BY-SA-4.0) |
+
+---
+
+## MIT License (Code)
+
+The EEL2 scripts (`.eel`) are free to use, modify, and distribute for any purpose, including commercial applications. You do not need to credit HyperAudio in your final product, though it is appreciated.
+
+## CC BY-SA 4.0 (Audio Artifacts)
+
+The impulse responses (`.irs`), correction profiles (`.vdc`), and technical reports (`.md`) are licensed under Creative Commons Attribution-ShareAlike 4.0. 
+
+This means:
+- **Attribution:** You must give appropriate credit to Noushad M.
+- **ShareAlike:** If you remix or modify the audio artifacts, you must distribute your contributions under the same license.
+
+> [!NOTE]
+> This split licensing ensures the DSP math remains open and accessible, while preventing the custom tuning curves from being rebranded and sold as proprietary presets.
+
+---
+
+<div align="center">
+<sub>Designed &amp; tuned by <b>Noushad M.</b> · © 2026</sub>
+</div>
