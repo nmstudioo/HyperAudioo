@@ -1,64 +1,66 @@
-# KZ EDX Pro — IEM setup guide
+# HyperAudio · KZ EDX Pro Setup
 
-> **Chain:** identity DDC → 2048-frame IRS → selectable EEL processing (v5; Effects is the default).
->
-> **Listening caution:** the EDX Pro is a sensitive IEM (112 dB/mW). Begin at low volume.
+This guide details the installation and configuration for the KZ EDX Pro IEM profile. The chain uses three files to achieve a mathematically flat tonal foundation, dynamic safety, and optional spatial character. 
 
-## 1. Load order
+---
 
-| Order | Module | File | Role |
-|---:|---|---|---|
-| 1 | DDC | `HA_IEM_v3.vdc` | Identity; dual-rate 44.1 / 48 kHz banks; no correction |
-| 2 | Convolver | `HA_IEM_v3.irs` | 2048-frame minimum-phase FIR, 48 kHz, float32 stereo; carries the correction |
-| 3 | Liveprog | `HA_IEM_v3.eel` | Effects (default) or Limiter-only path, followed by look-ahead limiting |
+## Overview
 
-Load correction **once**, in the convolver. The DDC is an identity stage; it does not add a second EQ.
+The KZ EDX Pro chain requires the RootlessJamesDSP app. It uses a three-stage architecture: an identity VDC, a tonal-correcting IRS, and an EEL2 limiter.
 
-## 2. Before you start
+| Component | File | Function |
+|---|---|---|
+| **VDC** | `HA_IEM_v3.vdc` | Identity filterbank (no tonal correction). |
+| **IRS** | `HA_IEM_v3.irs` | Minimum-phase FIR (applies the actual tuning). |
+| **EEL** | `HA_IEM_v3.eel` | Look-ahead limiter and dynamic safety. |
 
-1. Set host rate to **48 kHz** (the IRS is 48 kHz only) and check the running rate.
-2. Set convolver preamp to **0 dB**.
-3. Disable other EQ, bass boost, and the app's own crossfeed; it stacks with Surround 3D.
-4. Start at low volume.
+---
 
-## 3. Processing controls
+## Prerequisites
 
-**Processing mode** selects the signal path. `Effects` (default) runs De-esser, Surround 3D, and Space Width before the limiter. `Limiter only` bypasses all three effect blocks while retaining input gain, look-ahead limiting, and normal 48-sample latency. Switching paths clears effect memories to avoid stale state when returning to Effects.
+Before loading the files, ensure the following conditions are met in RootlessJamesDSP:
 
-| Control | Default | Range | Notes |
-|---|---:|---|---|
-| Master | `On` | Off / On | |
-| Processing mode | `Effects` | Effects / Limiter only | Effects is default; Limiter only skips all three effect blocks |
-| Limiter mode | `Default` | Default / Safe / Transparent / Customize / Full bypass | Full bypass disables the entire processing path |
-| Custom ceiling tenths dBFS | `-15` | −600 … 0 | Used by Customize |
-| Custom release ms | `80` | 10 … 500 | Used by Customize |
-| Input gain tenths dB | `0` | −120 … 0 | |
-| Deesser Amount | `40` | 0 … 100 | Maximum cut = amount × 0.12 dB; 0 = off |
-| Deesser Threshold tenths dBFS | `-200` | −500 … −100 | Lower = more de-essing |
-| Surround 3D Amount | `40` | 0 … 100 | Crossfeed; centre signal untouched; 0 = off |
-| Space Width tenths dB | `20` | 0 … 60 | Side-channel shelf above ~3 kHz; 0 = off |
+> [!WARNING]
+> **Host Rate:** You must set the RootlessJamesDSP processing rate to **48 kHz**. Verify the actual running rate in the app settings, not just the system configuration. The `HA_IEM_v3.irs` file is a 48 kHz asset; running it at 44.1 kHz will change the filter timing and frequency behavior.
 
-### Limiter modes
+1. Disable all other EQ, bass boost, and OEM sound effects.
+2. Set the Convolver Preamp to **0 dB**. The IRS is already level-matched.
+3. Do not load the VDC and IRS if you are using a standalone EQ preset.
 
-| Mode | Ceiling | Release |
-|---|---:|---:|
-| Default | −1.5 dBFS | 80 ms |
-| Safe | −2.0 dBFS | 120 ms |
-| Transparent | −1.0 dBFS | 200 ms |
-| Customize | Slider | Slider |
-| Full bypass | Bypass | n/a |
+---
 
-## 4. Tuning
+## Step-by-Step Installation
 
-1. Start at defaults.
-2. If sibilance is prominent, lower Deesser Threshold toward `-250`. If cymbals sound dull, raise it toward `-150` or reduce Amount.
-3. For more depth, raise Surround 3D toward `60`. If vocals or bass sound unnatural, set it to `0`.
-4. Space Width above `40` can sound unnatural on wide recordings.
-5. Each effect at `0` is intended to bypass that block transparently. `Limiter only` skips effects but retains input gain and limiting. `Full bypass` (or Master Off) bypasses the entire EEL processing chain, including input gain and limiter.
+### 1. Load the VDC
+Navigate to the **DDC** (Digital Direct Correction) section. Load `HA_IEM_v3.vdc`.
 
-## 5. Operating notes
+> [!NOTE]
+> The VDC is an identity filterbank. It does not alter the frequency response; it exists only to maintain a consistent three-stage architecture across the IEM and Speaker profiles. 
 
-- The limiter is **sample-peak**, not true-peak and not a hearing-safety device.
-- With the limiter engaged, signal delay is 48 samples (1 ms at 48 kHz). Delay-compensate null tests.
-- Surround 3D is crossfeed plus width, not HRTF virtualisation.
-- The app rewrites the `.eel` file when a control moves. Keep a clean copy.
+### 2. Load the IRS
+Navigate to the **Convolver** section. Load `HA_IEM_v3.irs`. Ensure the convolver preamp is set to `0 dB`.
+
+> [!IMPORTANT]
+> Tonal correction happens here. Never stack another EQ on top of the IRS, or you will apply the correction twice.
+
+### 3. Load the EEL2 Limiter
+Navigate to the **Liveprog** (EEL2) section. Load `HA_IEM_v3.eel`. 
+
+The EEL script provides a true look-ahead limiter. Set the ceiling slider to `-0.5 dBFS` and the release time to `150 ms`.
+
+---
+
+## Verification
+
+After loading all three files:
+1. Play a familiar track at low volume.
+2. Confirm the EEL2 UI renders correctly and the processing mode is active.
+3. Increase the volume. The limiter should catch peaks without audible distortion or pumping.
+
+For detailed numerical metrics, see the [IEM Technical Report](report_EDX_HA.md).
+
+---
+
+<div align="center">
+<sub>Designed &amp; tuned by <b>Noushad M.</b> · © 2026</sub>
+</div>
