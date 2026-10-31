@@ -68,8 +68,8 @@ The shipped limiter (EDX_Limiter_v1.eel) uses a true look-ahead architecture wit
 3. Smoothing: Instant attack, exponential release.
 4. Output: The delayed signal is read from the buffer and multiplied by the smoothed gain.
 
-[!NOTE]
-Do not use prefix/suffix minimum arrays in the EEL VM unless absolutely necessary. The direct-scan method used in HyperAudio's limiter is faster and avoids memory wrap bugs that cause clicking.
+> [!NOTE]
+> Do not use prefix/suffix minimum arrays in the EEL VM unless absolutely necessary. The direct-scan method used in HyperAudio's limiter is faster and avoids memory wrap bugs that cause clicking.
 
 ---
 
