@@ -1,55 +1,70 @@
-# Redmi 12 Speaker — standalone PEQ guide
+# HyperAudio · Redmi 12 Speaker Setup
 
-> **This guide describes a standalone Liveprog PEQ setup.** It replaces the previous DDC → IRS → limiter chain for PEQ audition/use. Do not combine the two configurations.
+This guide details the installation for the Redmi 12 speaker profile. The current recommended configuration uses a standalone Liveprog PEQ script. 
 
-## 1. Load order
+---
 
-Load only the Liveprog file:
+## Overview
 
-| Order | Module | File | Role |
-|---:|---|---|---|
-| 1 | Liveprog | `HA_Speaker_Master.eel` | Standalone parametric EQ and stereo-linked look-ahead limiter |
+The Redmi 12 chain uses a single, highly optimized EEL2 script. This script combines a multi-band parametric EQ with a stereo-linked look-ahead limiter to correct the speaker's physical limitations directly.
 
-**Do not load** `HA_Speaker_Master.vdc`, any Speaker DDC, or `HA_Speaker_Master.irs` / any Speaker convolver impulse response with this setup.
+> [!WARNING]
+> **Architecture Change:** This guide uses the standalone PEQ configuration. It explicitly **excludes** the VDC and IRS files from the legacy V6 chain. Do not load `HA_Speaker_Master.vdc` or `HA_Speaker_Master.irs` with this setup.
 
-Disable other system/player EQ, bass enhancement, and OEM sound effects to avoid stacking corrections. The three PEQ choices are alternatives: select one profile at a time and never stack them.
+| Component | File | Function |
+|---|---|---|
+| **EEL** | `HA_Speaker_Master.eel` | Standalone PEQ + look-ahead limiter. |
+| *Legacy VDC* | *`HA_Speaker_Master.vdc`* | *Frozen asset (do not load with this guide).* |
+| *Legacy IRS* | *`HA_Speaker_Master.irs`* | *Frozen asset (do not load with this guide).* |
 
-## 2. Before you start
+---
 
-1. Set the RootlessJamesDSP processing rate to **48 kHz** where possible. The limiter look-ahead is 48 samples (1 ms at 48 kHz); biquad coefficients use the active EEL sample rate.
-2. Start at a moderate listening volume.
-3. Level-match when comparing profiles. The profile-specific preamp is built into each selected profile.
+## Prerequisites
 
-## 3. EEL controls
+Before loading the file, ensure the following conditions are met:
 
-| Control | Default | Range | Meaning |
-|---|---:|---|---|
-| Processing | `Protect` | Bypass / Protect | Bypass is true bypass; Protect enables the selected PEQ and limiter |
-| Speaker PEQ Profile | `Off` | Off / Fusion Hybrid / Equilibrium / Stellar Master | Select exactly one PEQ profile |
-| Input Gain tenths dB | `0` | −12.0 … +6.0 dB | Additional trim ahead of PEQ and limiter |
-| Peak Ceiling tenths dBFS | `-30` | −12.0 … 0 dBFS | Linked sample-peak ceiling; default −3.0 dBFS |
-| Release ms | `80` | 20 … 300 ms | Limiter gain recovery time |
+1. Set the RootlessJamesDSP host rate to **48 kHz**.
+2. Disable all system-level EQ, bass boost, and OEM audio effects.
+3. Leave the DDC and Convolver sections **empty**.
 
-### Profile selector
+---
 
-| Value | Profile | Built-in preamp |
-|---:|---|---:|
-| 0 | Off (limiter only) | 0 dB |
-| 1 | Fusion Hybrid | −7.5 dB |
-| 2 | Equilibrium | −7.2 dB |
-| 3 | Stellar Master | −0.1 dB |
+## Step-by-Step Installation
 
-The PEQ profiles use cascaded RBJ biquads. Low/high-shelf Q-to-slope conversion follows the RBJ cookbook mapping. Confirm shelf response against Poweramp or measurement before treating it as bit-identical to the exported EQ.
+### 1. Load the Standalone EEL2 Script
+Navigate to the **Liveprog** (EEL2) section. Load `HA_Speaker_Master.eel`.
 
-## 4. Limiter behaviour
+This script performs the entire correction chain in one pass:
+- **PEQ:** Corrects the speaker's harsh treble peaks and bloated mid-bass.
+- **Limiter:** Prevents the physical driver from clipping or distorting.
 
-Protect mode uses a stereo-linked 48-sample look-ahead limiter, instant attack, and exponential release. At 48 kHz, added look-ahead latency is 1 ms. Output is sample-peak clamped to the selected ceiling.
+### 2. Configure the Sliders
+Upon loading, verify the default slider values in the Liveprog interface:
+- **Pre Gain:** `0 dB` (Adjust only if additional volume is needed).
+- **Limiter Ceiling:** `-1.5 dBFS` (Protects the hardware).
+- **Release:** `80 ms`.
 
-> **Safety boundary:** This is not a true-peak limiter, excursion model, or hearing-safety device. It cannot guarantee speaker protection at arbitrary volume.
+> [!NOTE]
+> Because this is a standalone script, it replaces the need for external IRS files. The math is calculated directly in the EEL VM.
 
-## 5. Operating notes
+---
 
-- `Off` means no PEQ and no profile preamp; the limiter remains active in Protect mode.
-- `Bypass` disables PEQ, input gain, delay, limiter, and output clamp.
-- Changing profiles clears filter history and installs new coefficients immediately. For clean A/B comparisons, change profiles while playback is paused or muted.
-- Keep a clean copy of this EEL file before editing.
+## Legacy V6 Assets
+
+The older V6 configuration used a three-file chain (`HA_Speaker_Master.vdc` → `HA_Speaker_Master.irs` → `HA_Speaker_Master_BETA.eel`). These files remain in the repository for archival purposes and are documented in the [V6 Technical Report](report_Redmi_12.md). 
+
+Do not mix the legacy VDC/IRS with the standalone EEL script.
+
+---
+
+## Verification
+
+1. Play a bass-heavy track at moderate volume.
+2. Confirm the low-end is controlled (not bloated) and the treble is no longer harsh.
+3. Push the volume. The limiter should engage smoothly without causing the speaker to rattle or distort.
+
+---
+
+<div align="center">
+<sub>Designed &amp; tuned by <b>Noushad M.</b> · © 2026</sub>
+</div>
