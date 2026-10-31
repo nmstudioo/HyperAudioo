@@ -26,7 +26,7 @@ Principles for reading raw data:
 
 ## 3. KZ EDX Pro target
 
-![KZ EDX Pro raw vs target](images/KZ_EDX_Pro_target.png)
+<img src="https://nmstudioo.github.io/HyperAudioo/assets/KZ_EDX_Pro_target.png" alt="KZ EDX Pro raw response vs target" width="100%">
 
 *The raw trace in this plot is subsampled, so fine peaks are smoothed.*
 
@@ -60,7 +60,7 @@ If the result sounds too bright, lower 5 to 8 kHz by 1 to 1.5 dB.
 
 ## 4. Redmi 12 speaker target
 
-![Redmi 12 speaker raw vs target](images/Redmi12_Speaker_target.png)
+<img src="https://nmstudioo.github.io/HyperAudioo/assets/Redmi12_Speaker_target.png" alt="Redmi 12 speaker raw response vs target" width="100%">
 
 ### Principle: target what the driver can actually do
 
