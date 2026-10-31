@@ -1,50 +1,50 @@
-# HyperAudio DSP — Add-on Effects Library
+# HyperAudio · Add-on Effects
 
-These add-on components are designed to supplement the **KZ EDX Pro Core Chain** (the VDC + EEL Limiter). 
-
-Because the core `HA_IEM_v4.vdc` mathematically flattens the IEM's frequency response, **the add-ons in this folder do not apply any EQ or tonal correction.** Instead, they add specific acoustic dimensions—such as spatial externalization, transient phase alignment, or dynamic volume compensation—without breaking the tonal foundation.
-
-## ⚠️ Core Rules
-1. **Never stack IRS files.** The RootlessJamesDSP Convolver can only load one `.irs` file at a time. Choose the one that fits your listening session.
-2. **Keep the Convolver Preamp at 0 dB.** All `.irs` files in this folder are pre-normalized to safe levels. Do not apply additional gain reduction inside the Convolver.
-3. **Do not use the built-in BS2B Crossfeed if you are using the EFOtech Crossfeed IRS.** They do the same job; using both will result in phase cancellation and a hollow sound.
+This document outlines the optional effects available in the `addons/` directory. These files are designed to supplement the core chain, but they must be used carefully to avoid breaking the tonal correction.
 
 ---
 
-## 1. Phase & Clarity Upgrade
-**File:** `BBE_SonicMax.irs`
-**Type:** Impulse Response (IRS)
-**What it does:** Replicates the famous BBE Sonic Maximizer hardware. It applies a frequency-dependent phase shift, delaying the low frequencies so they align perfectly with the high frequencies. This restores the "attack" and punch of drums and guitars without adding artificial treble.
-**How to use it:** Load this into the Convolver slot. It completely replaces the custom `EDX_Analog_Warmth.irs` if you want a more aggressive, hardware-accurate phase correction.
+## Overview
+
+The HyperAudio core chain (VDC → IRS → EEL2) is mathematically tuned for a flat, reference-grade response. The add-ons in this directory introduce specific acoustic dimensions—such as spatial externalization or transient phase alignment—without applying standard EQ.
 
 ---
 
-## 2. Spatial Externalization (Crossfeed)
-**File:** `EFOtech_MLV_01024_TrueStereo.irs`
-**Type:** True-Stereo (4-Channel) Impulse Response
-**What it does:** IEMs push sound directly into your ear canal, causing "in-head" localization (the music sounds like it is inside your skull). This measured 1024-tap HRTF kernel mimics the acoustic shadow of a human head, pushing the soundstage outward to simulate a pair of studio monitors in front of you.
-**How to use it:** Load this into the Convolver slot. Turn off the built-in BS2B crossfeed. 
+## IRS Add-ons
+
+The RootlessJamesDSP convolver can only load **one** `.irs` file at a time. Loading an add-on IRS means you are **replacing** the core tonal-correction IRS. 
+
+> [!WARNING]
+> **Level Matching:** The add-on IRS files are not level-matched to the project gates. Measured maximum gain from 20 Hz to 20 kHz:
+> - `BBE SonicMax.irs`: +7.9 dB (left) and +9.8 dB (right)
+> - `EFOtech MLV...irs`: +3.7 to +5.3 dB across its four channels
+>
+> Lower your volume significantly before swapping the core IRS for an add-on.
+
+### BBE SonicMax (`BBE SonicMax.irs`)
+- **Purpose:** Phase alignment and transient punch.
+- **How it works:** It applies a frequency-dependent phase shift to realign the low and high frequencies, restoring the "attack" of drums and guitars.
+- **Usage:** Load in the Convolver instead of the core IRS.
+
+### EFOtech MLV (`EFOtech MLV 01024 (True Stereo, 48kHz).irs`)
+- **Purpose:** Spatial externalization (crossfeed).
+- **How it works:** A measured 1024-tap HRTF kernel that mimics the acoustic shadow of a human head, pushing the sound out of your head.
+- **Usage:** Load in the Convolver instead of the core IRS. Turn off the built-in BS2B crossfeed in RootlessJamesDSP.
 
 ---
 
-## 3. Dynamic Range / Glue Reference
-**File:** `GentleDynamics.json`
-**Type:** EasyEffects Preset (Reference Only)
-**What it does:** A highly regarded 8-band multiband compressor designed to gently "glue" the mix together and even out level differences.
-**How to use it:** RootlessJamesDSP cannot natively load EasyEffects `.json` files. **Do not load this directly.** If you want this effect, open the file in a text editor, read the compressor thresholds/ratios, and manually dial them into the RootlessJamesDSP FET Compressor. *(Note: For critical listening, we recommend keeping compression OFF to preserve the original dynamic punch of the recording).*
+## JSON Reference Presets
+
+The `addons/` folder contains three `.json` files from the EasyEffects project:
+- `Concert Hall.json` (Reverb)
+- `GentleDynamics.json` (Multiband compressor)
+- `Night Listening.json` (ISO 226 loudness)
+
+> [!NOTE]
+> RootlessJamesDSP **cannot** load EasyEffects `.json` files directly. These files are provided as references. If you wish to use their effects, you must manually read the parameters in the JSON file and recreate them using the built-in Dynamic Bass Boost, FET Compressor, or Reverb modules in RootlessJamesDSP.
 
 ---
 
-## 4. Volume Compensation (Night Mode)
-**File:** `Night_Listening.json`
-**Type:** EasyEffects Preset (Reference Only)
-**What it does:** Implements the ISO 226 equal-loudness contour. At low volumes, human hearing naturally loses sensitivity to bass and treble. This preset dynamically boosts those frequencies *only* at low volumes, keeping the music sounding full and balanced without waking the neighbours.
-**How to use it:** Like above, this is a reference JSON. To achieve this in RootlessJamesDSP, enable the built-in **Dynamic Bass Boost** (or Loudness) module and set the reference volume to your typical quiet listening level. 
-
----
-
-## 5. Ambient Spatial Reverb
-**File:** `Concert_Hall.json`
-**Type:** EasyEffects Preset (Reference Only)
-**What it does:** A pure algorithmic reverb (Zita Reverb) tuned for ambient and live recordings. It adds a natural, decaying acoustic space around the music without the metallic artifacts of cheap "3D" spatializers.
-**How to use it:** This is a situational reference file. To replicate it in RootlessJamesDSP, enable the built-in Reverb module and use a large room size with a wet mix of 10%–15%. Do not use this for standard studio tracks, as it will reduce clarity.
+<div align="center">
+<sub>Designed &amp; tuned by <b>Noushad M.</b> · © 2026</sub>
+</div>
