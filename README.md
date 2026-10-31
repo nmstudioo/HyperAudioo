@@ -49,6 +49,8 @@ The two profiles are deployed differently:
 
 See the [methodology](docs/methodology.md) for the evidence model and processing rationale.
 
+---
+
 ## Device profiles
 
 ### Redmi 12 · Speaker
@@ -71,6 +73,8 @@ See the [methodology](docs/methodology.md) for the evidence model and processing
 
 [Setup guide](edx_pro/Setting_Guide_IEM.md) · [Technical report](edx_pro/report_EDX_HA.md)
 
+---
+
 ## Processing architecture
 
 The three-file chain below is used by the IEM profile and the frozen Speaker V6 assets. It is not the standalone Speaker PEQ configuration.
@@ -83,16 +87,18 @@ flowchart LR
     D --> E[Output]
 ```
 
-> [!IMPORTANT]
-> Tonal correction lives in the IRS. The shipped VDC files are identity filterbanks. Never load the same EQ in more than one stage, because it is then applied more than once.
+[!IMPORTANT]
+Tonal correction lives in the IRS. The shipped VDC files are identity filterbanks. Never load the same EQ in more than one stage, because it is then applied more than once.
 
-## Quick start
+---
 
-1. **Pick the right guide first.** The IEM guide uses the three-file chain. The Speaker guide uses the standalone EEL only.
-2. **Set the host rate to 48 kHz** and verify the running rate. For the IEM chain, set the convolver preamp to 0 dB.
-3. **Disable other processing:** extra EQ, bass enhancement, the app's own crossfeed and OEM sound effects.
-4. **Load in order.** IEM: DDC (`.vdc`), then Convolver (`.irs`), then Liveprog (`.eel`). Speaker: Liveprog only.
-5. **Start at low volume** and confirm the profile and processing mode.
+Quick start
+
+1. Pick the right guide first. The IEM guide uses the three-file chain. The Speaker guide uses the standalone EEL only.
+2. Set the host rate to 48 kHz and verify the running rate. For the IEM chain, set the convolver preamp to 0 dB.
+3. Disable other processing: extra EQ, bass enhancement, the app's own crossfeed and OEM sound effects.
+4. Load in order. IEM: DDC (.vdc), then Convolver (.irs), then Liveprog (.eel). Speaker: Liveprog only.
+5. Start at low volume and confirm the profile and processing mode.
 
 ```text
 KZ EDX Pro (load all three)         Redmi 12 Speaker (standalone)
@@ -102,100 +108,110 @@ edx_pro/                            Redmi_12/
 └── HA_IEM_v3.eel
 ```
 
-## The browser site
+---
 
-[Open HyperAudio](https://nmstudioo.github.io/HyperAudioo/). It is a static site with no build step, and all computation runs locally in the browser.
+The browser site
 
-| Feature | What it does |
-|---|---|
-| Profiles | Switches between the KZ EDX Pro and Redmi 12 chains. |
-| Response chart | Plots the response of the hosted IRS on a log-frequency axis with 1/6-octave smoothing. |
-| Quality assurance | Fetches the hosted VDC, IRS and EEL files and checks them in the browser. Downloads are blocked when a check fails. |
-| Export | Downloads the profile files or copies a 127-point GraphicEQ curve derived from the IRS. |
-| Verification harness | Runs offline checks. This is not native app, ARM or device validation. |
-| Documentation reader | Opens repository documents in the site. Example deep link: `#read/docs/methodology.md`. |
+Open HyperAudio. It is a static site with no build step, and all computation runs locally in the browser.
 
-## Data and targets
+Feature What it does
+Profiles Switches between the KZ EDX Pro and Redmi 12 chains.
+Response chart Plots the response of the hosted IRS on a log-frequency axis with 1/6-octave smoothing.
+Quality assurance Fetches the hosted VDC, IRS and EEL files and checks them in the browser. Downloads are blocked when a check fails.
+Export Downloads the profile files or copies a 127-point GraphicEQ curve derived from the IRS.
+Verification harness Runs offline checks. This is not native app, ARM or device validation.
+Documentation reader Opens repository documents in the site. Example deep link: #read/docs/methodology.md.
 
-The corrections are fitted to measurement data and target curves kept in [`data/`](data/). Both targets are custom and offline-computed. They are not published standards.
+---
 
-| File | Content |
-|---|---|
-| [`data/Raw/kz_edx_pro_raw.txt`](data/Raw/kz_edx_pro_raw.txt) | KZ EDX Pro raw response, 695 points |
-| [`data/Raw/redmi12_speaker_raw.txt`](data/Raw/redmi12_speaker_raw.txt) | Redmi 12 speaker raw response, 59 points |
-| [`data/target/kz_edx_pro_target.txt`](data/target/kz_edx_pro_target.txt) | IEM target, 701 points, dB relative to 1 kHz |
-| [`data/target/redmi12_speaker_target.txt`](data/target/redmi12_speaker_target.txt) | Speaker target, 701 points, dB relative to 1 kHz |
+Data and targets
+
+The corrections are fitted to measurement data and target curves kept in data/. Both targets are custom and offline-computed. They are not published standards.
+
+File Content
+data/Raw/kz_edx_pro_raw.txt KZ EDX Pro raw response, 695 points
+data/Raw/redmi12_speaker_raw.txt Redmi 12 speaker raw response, 59 points
+data/target/kz_edx_pro_target.txt IEM target, 701 points, dB relative to 1 kHz
+data/target/redmi12_speaker_target.txt Speaker target, 701 points, dB relative to 1 kHz
 
 <p align="center">
   <img src="assets/KZ_EDX_Pro_target.png" alt="KZ EDX Pro raw response against target" width="49%">
   <img src="assets/Redmi12_Speaker_target.png" alt="Redmi 12 speaker raw response against target" width="49%">
 </p>
 
-Method and principles: [Raw and target curves](data/methodology.md).
+Method and principles: Raw and target curves.
 
-## Add-ons
+---
 
-[`addons/`](addons/) holds two optional impulse responses and three EasyEffects reference presets. See the [add-on guide](addons/effects.md).
+Add-ons
 
-> [!WARNING]
-> The add-on IRS files are not level-matched to the project gates. Measured maximum gain from 20 Hz to 20 kHz: `BBE SonicMax.irs` +7.9 dB (left) and +9.8 dB (right); `EFOtech MLV 01024 (True Stereo, 48kHz).irs` +3.7 to +5.3 dB across its four channels. The project gate is 0 dB. The convolver loads one IRS at a time, so an add-on IRS replaces the tonal-correction IRS rather than adding to it. Lower the volume before trying one.
+addons/ holds two optional impulse responses and three EasyEffects reference presets. See the add-on guide.
 
-The three `.json` files cannot be loaded by RootlessJamesDSP. They are references only.
+[!WARNING]
+The add-on IRS files are not level-matched to the project gates. Measured maximum gain from 20 Hz to 20 kHz: BBE SonicMax.irs +7.9 dB (left) and +9.8 dB (right); EFOtech MLV 01024 (True Stereo, 48kHz).irs +3.7 to +5.3 dB across its four channels. The project gate is 0 dB. The convolver loads one IRS at a time, so an add-on IRS replaces the tonal-correction IRS rather than adding to it. Lower the volume before trying one.
 
-## Documentation
+The three .json files cannot be loaded by RootlessJamesDSP. They are references only.
 
-| Reference | Purpose | Read |
-|---|---|---|
-| [VDC reference](docs/vdc_functions.md) | Shipped VDC structure and evidence boundaries | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/vdc_functions.md) |
-| [IRS reference](docs/irs_functions.md) | IRS format, metrics and validation | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/irs_functions.md) |
-| [EEL2 reference](docs/eel_functions.md) | VM syntax, parser constraints and implementation guidance | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/eel_functions.md) |
-| [System reference](docs/system_full.md) | Architecture, profile state, operation, evidence and limitations | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/system_full.md) |
-| [Methodology](docs/methodology.md) | Synthesis, gating and evidence method | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/methodology.md) |
-| [Test report](docs/test_report.md) | Results, scope and open questions | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/test_report.md) |
-| [Style guide](docs/style_guide.md) | How every document in this repository is written | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/style_guide.md) |
-| [Repository map](docs/repository_map.md) | Annotated list of every file | [Site](https://nmstudioo.github.io/HyperAudioo/#read/docs/repository_map.md) |
-| [Speaker setup guide](Redmi_12/Setting_Guide_S.md) | Redmi 12 standalone installation | [Site](https://nmstudioo.github.io/HyperAudioo/#read/Redmi_12/Setting_Guide_S.md) |
-| [IEM setup guide](edx_pro/Setting_Guide_IEM.md) | KZ EDX Pro installation | [Site](https://nmstudioo.github.io/HyperAudioo/#read/edx_pro/Setting_Guide_IEM.md) |
-| [Speaker report](Redmi_12/report_Redmi_12.md) | Speaker V6 numerical report | [Site](https://nmstudioo.github.io/HyperAudioo/#read/Redmi_12/report_Redmi_12.md) |
-| [IEM report](edx_pro/report_EDX_HA.md) | IEM numerical report | [Site](https://nmstudioo.github.io/HyperAudioo/#read/edx_pro/report_EDX_HA.md) |
-| [Raw and target curves](data/methodology.md) | Measurement and target method | [Site](https://nmstudioo.github.io/HyperAudioo/#read/data/methodology.md) |
-| [Add-on guide](addons/effects.md) | Optional IRS files and reference presets | [Site](https://nmstudioo.github.io/HyperAudioo/#read/addons/effects.md) |
-| [Attribution](ATTRIBUTION.md) | Third-party sources and credits | [Site](https://nmstudioo.github.io/HyperAudioo/#read/ATTRIBUTION.md) |
-| [Licence summary](LICENSE.md) | Licence scope and notices | [GitHub](LICENSE.md) |
+---
 
-### Verification harnesses
+Documentation
+
+Reference Purpose Read
+VDC reference Shipped VDC structure and evidence boundaries Site
+IRS reference IRS format, metrics and validation Site
+EEL2 reference VM syntax, parser constraints and implementation guidance Site
+System reference Architecture, profile state, operation, evidence and limitations Site
+Methodology Synthesis, gating and evidence method Site
+Test report Results, scope and open questions Site
+Style guide How every document in this repository is written Site
+Repository map Annotated list of every file Site
+Speaker setup guide Redmi 12 standalone installation Site
+IEM setup guide KZ EDX Pro installation Site
+Speaker report Speaker V6 numerical report Site
+IEM report IEM numerical report Site
+Raw and target curves Measurement and target method Site
+Add-on guide Optional IRS files and reference presets Site
+Attribution Third-party sources and credits Site
+Licence summary Licence scope and notices GitHub
+
+Verification harnesses
 
 <p align="center">
   <img src="assets/Speaker_AB_Harness.svg" alt="Speaker verification harness report" width="49%">
   <img src="assets/IEM_AB_Harness.svg" alt="IEM verification harness report" width="49%">
 </p>
 
-## Validation and evidence
+---
 
-| Component | Offline / numerical | App or device | Listening |
-|---|---|---|---|
-| Speaker VDC | `PASS` identity | `USER REPORTED` | `USER REPORTED` |
-| Speaker IRS | `PASS` | `USER REPORTED` | `USER REPORTED` |
-| Speaker EEL V6 (previous revision) | `PARTIAL` compile, ceiling, bypass; non-finite rerun pending | `USER REPORTED` | `USER REPORTED` |
-| Speaker EEL standalone V1.0 | No recorded test | `NOT RUN` | `NOT RUN` |
-| IEM VDC | `PASS` identity | `USER REPORTED` | `USER REPORTED` |
-| IEM IRS | `PASS` | `USER REPORTED` | `USER REPORTED` |
-| IEM EEL effects path | Prior v4 checks: effects, ceiling, bypass, non-finite | `NOT RUN` for v5 | `NOT RUN` |
-| IEM EEL v5 mode selector | Source review only; VM retest pending | `NOT RUN` | `NOT RUN` |
+Validation and evidence
 
-**Evidence boundary.** Offline checks use a source-built JamesDSP VM on x86_64. They are not native ARM, RootlessJamesDSP app, target-device or listening tests. Numerically qualified does not mean device validated. Full scope and outstanding work: [test report](docs/test_report.md). Label definitions: [methodology](docs/methodology.md).
+Component Offline / numerical App or device Listening
+Speaker VDC PASS identity USER REPORTED USER REPORTED
+Speaker IRS PASS USER REPORTED USER REPORTED
+Speaker EEL V6 (previous revision) PARTIAL compile, ceiling, bypass; non-finite rerun pending USER REPORTED USER REPORTED
+Speaker EEL standalone V1.0 No recorded test NOT RUN NOT RUN
+IEM VDC PASS identity USER REPORTED USER REPORTED
+IEM IRS PASS USER REPORTED USER REPORTED
+IEM EEL effects path Prior v4 checks: effects, ceiling, bypass, non-finite NOT RUN for v5 NOT RUN
+IEM EEL v5 mode selector Source review only; VM retest pending NOT RUN NOT RUN
 
-## Known limitations
+Evidence boundary. Offline checks use a source-built JamesDSP VM on x86_64. They are not native ARM, RootlessJamesDSP app, target-device or listening tests. Numerically qualified does not mean device validated. Full scope and outstanding work: test report. Label definitions: methodology.
 
-- **Reproducibility:** `iem_build.py`, `generate_irs.py` and the complete source inputs are not included. The published IRS cannot be regenerated from this repository alone.
-- **Speaker IRS provenance:** the measurement setup is not documented. If a microphone response was part of the source measurement, it is also in the filter.
-- **IEM voicing:** it has no measurement behind it and is a design choice.
-- **Spatial processing:** the IEM surround feature is crossfeed plus width, not HRTF virtualisation.
-- **ARM:** EEL tests ran on x86_64. The v5 processing-mode selector has not been tested in the VM or on a device.
-- **Limiter scope:** sample-peak limiting is not true-peak limiting or driver-excursion protection.
-- **Sample rate:** the IRS assets are 48 kHz only. Another host rate changes timing and frequency behaviour.
+---
 
-## Integrity
+Known limitations
+
+· Reproducibility: iem_build.py, generate_irs.py and the complete source inputs are not included. The published IRS cannot be regenerated from this repository alone.
+· Speaker IRS provenance: the measurement setup is not documented. If a microphone response was part of the source measurement, it is also in the filter.
+· IEM voicing: it has no measurement behind it and is a design choice.
+· Spatial processing: the IEM surround feature is crossfeed plus width, not HRTF virtualisation.
+· ARM: EEL tests ran on x86_64. The v5 processing-mode selector has not been tested in the VM or on a device.
+· Limiter scope: sample-peak limiting is not true-peak limiting or driver-excursion protection.
+· Sample rate: the IRS assets are 48 kHz only. Another host rate changes timing and frequency behaviour.
+
+---
+
+Integrity
 
 Verify the shipped assets from the repository root:
 
@@ -203,28 +219,29 @@ Verify the shipped assets from the repository root:
 sha256sum -c SHA256SUMS
 ```
 
-[`SHA256SUMS`](SHA256SUMS) is the source of truth. The table shows it as of commit `80cd3b6`.
+SHA256SUMS is the source of truth. The table shows it as of commit 80cd3b6.
 
 <details>
 <summary><b>SHA-256 checksums</b></summary>
 
-| File | SHA-256 |
-|---|---|
-| `Redmi_12/HA_Speaker_Master.vdc` | `933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef` |
-| `Redmi_12/HA_Speaker_Master.irs` | `0ba8da0f4351aca761e3c7e39b37bccf9b61403f7d92ed60ecf1b23cda0c7de4` |
-| `Redmi_12/HA_Speaker_Master.eel` | `ae3e6d104b328d6379dbf481f0990bf1c6f7042de7dcc6c7c4f2a11bd742cb61` |
-| `Redmi_12/HA_Speaker_Master_BETA.eel` | `b19c1755ffbf86278177d4c1b90842c346490cfb5be8c7c8218705aa85c22f73` |
-| `edx_pro/HA_IEM_v3.vdc` | `933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef` |
-| `edx_pro/HA_IEM_v3.irs` | `b6d751a1613b48569a6ec485f477603172dcc14b0072f0c86c93b4668363b9d5` |
-| `edx_pro/HA_IEM_v3.eel` | `4fa7e64bda33b0651c8ce8722c5ee4b9f05aa029aed19444fdfabed22ad020b0` |
+File SHA-256
+Redmi_12/HA_Speaker_Master.vdc 933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef
+Redmi_12/HA_Speaker_Master.irs 0ba8da0f4351aca761e3c7e39b37bccf9b61403f7d92ed60ecf1b23cda0c7de4
+Redmi_12/HA_Speaker_Master.eel ae3e6d104b328d6379dbf481f0990bf1c6f7042de7dcc6c7c4f2a11bd742cb61
+Redmi_12/HA_Speaker_Master_BETA.eel b19c1755ffbf86278177d4c1b90842c346490cfb5be8c7c8218705aa85c22f73
+edx_pro/HA_IEM_v3.vdc 933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef
+edx_pro/HA_IEM_v3.irs b6d751a1613b48569a6ec485f477603172dcc14b0072f0c86c93b4668363b9d5
+edx_pro/HA_IEM_v3.eel 4fa7e64bda33b0651c8ce8722c5ee4b9f05aa029aed19444fdfabed22ad020b0
 
 The two identity VDC files are byte-identical, so they share one hash.
 
 </details>
 
-## Repository structure
+---
 
-The [repository map](docs/repository_map.md) lists every file with its size and purpose.
+Repository structure
+
+The repository map lists every file with its size and purpose.
 
 <details>
 <summary><b>Show repository tree</b></summary>
@@ -265,21 +282,24 @@ HyperAudioo/
 
 </details>
 
-## Licence
+---
 
-| Scope | Licence |
-|---|---|
-| EEL2 code (`.eel`) | [MIT](LICENSE-MIT) |
-| Audio artifacts (`.irs`, `.vdc`) and reports | [CC BY-SA 4.0](LICENSE-CC-BY-SA-4.0) |
+Licence
 
-## Credits
+Scope Licence
+EEL2 code (.eel) MIT
+Audio artifacts (.irs, .vdc) and reports CC BY-SA 4.0
 
-See [ATTRIBUTION.md](ATTRIBUTION.md). Presets derive from AutoEq-format data (jaakkopasanen/AutoEq, MIT) via RikudouGoku's database, corroborated by Speaker Ranking. The EEL2 scripts target the VM in RootlessJamesDSP (ThePBone, Apache 2.0). No third-party code is redistributed.
+---
 
-`data/Raw/` contains raw measurement files. Their source and redistribution terms are not documented here. See the attribution notice.
+Credits
+
+See ATTRIBUTION.md. Presets derive from AutoEq-format data (jaakkopasanen/AutoEq, MIT) via RikudouGoku's database, corroborated by Speaker Ranking. The EEL2 scripts target the VM in RootlessJamesDSP (ThePBone, Apache 2.0). No third-party code is redistributed.
+
+data/Raw/ contains raw measurement files. Their source and redistribution terms are not documented here. See the attribution notice.
 
 <div align="center">
 
-<sub>Designed &amp; tuned by <b>Noushad M.</b> - © 2026</sub>
+<sub>Designed &amp; tuned by <b>Noushad M.</b> ~ © 2026</sub>
 
 </div>
