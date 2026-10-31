@@ -37,299 +37,27 @@ document.documentElement.dataset.theme=(()=>{try{return localStorage.theme}catch
 <link rel="stylesheet" href="assets/style.css">
 <style>
 /* == Layout == */
-.x-flow{
-display:grid;
-gap:var(--s3);
-margin:var(--s5) 0;
-}
-
-.x-node{
-position:relative;
-padding:var(--s4);
-border:1px solid var(--line);
-border-radius:var(--r2);
-background:var(--bg2);
-}
-
-.x-node b{
-display:block;
-font:600 1.1rem var(--display);
-}
-
-.x-node small{
-display:block;
-margin-top:var(--s1);
-color:var(--mut);
-line-height:1.5;
-}
-
-.x-node.key{
-border-color:var(--acc);
-z-index:1;
-}
-
-@media(min-width:56rem){
-.x-flow{
-grid-template-columns:repeat(5,1fr);
-gap:0;
-}
-
-.x-node{
-border-radius:0;
-margin-left:-1px;
-}
-
-.x-node:first-child{
-border-radius:var(--r2) 0 0 var(--r2);
-margin:0;
-}
-
-.x-node:last-child{
-border-radius:0 var(--r2) var(--r2) 0;
-}
-}
-
-/* == Grid == */
-.x-grid{
-display:grid;
-gap:var(--s4);
-margin-top:var(--s5);
-}
-
-@media(min-width:48rem){
-.x-grid.two{
-grid-template-columns:1fr 1fr;
-}
-}
-
-/* == Cards == */
-.x-card{
-padding:var(--s5);
-border:1px solid var(--line);
-border-radius:var(--r3);
-background:var(--bg2);
-}
-
-.x-card h3{
-font:600 1.35rem/1.2 var(--display);
-margin:.2rem 0 var(--s3);
-}
-
-.x-card p{
-color:var(--mut);
-line-height:1.7;
-margin-bottom:var(--s4);
-}
-
-.x-spec{
-display:grid;
-grid-template-columns:auto 1fr;
-gap:.4rem var(--s4);
-font:500 var(--t-sm)/1.5 var(--mono);
-margin-bottom:var(--s4);
-}
-
-.x-spec dt{
-color:var(--dim);
-}
-
-.x-spec dd{
-overflow-wrap:anywhere;
-}
-
-/* == Warnings == */
-.x-warn{
-max-width:58rem;
-padding-left:var(--s4);
-border-left:2px solid var(--warn);
-color:var(--mut);
-line-height:1.7;
-margin-top:var(--s4);
-}
-
-.x-warn b{
-color:var(--fg);
-font-weight:500;
-}
-
-/* == Steps == */
-.x-steps{
-list-style:none;
-counter-reset:s;
-display:grid;
-gap:var(--s3);
-max-width:58rem;
-}
-
-.x-steps li{
-counter-increment:s;
-display:grid;
-grid-template-columns:2.2rem 1fr;
-gap:var(--s3);
-color:var(--mut);
-line-height:1.7;
-}
-
-.x-steps li::before{
-content:counter(s);
-font:600 1.1rem var(--display);
-color:var(--acc-t);
-}
-
-.x-steps b{
-color:var(--fg);
-font-weight:500;
-}
-
-/* == Code == */
-.x-code{
-overflow-x:auto;
-padding:var(--s4);
-border:1px solid var(--line);
-border-radius:var(--r2);
-background:var(--code);
-color:var(--code-fg);
-font:500 var(--t-sm)/1.7 var(--mono);
-margin:0;
-}
-
-/* == Tables == */
-.x-tbl{
-overflow-x:auto;
-border:1px solid var(--line);
-border-radius:var(--r2);
-}
-
-.x-tbl table{
-width:100%;
-min-width:40rem;
-border-collapse:collapse;
-font-size:var(--t-sm);
-}
-
-.x-tbl th,
-.x-tbl td{
-padding:var(--s3) var(--s4);
-text-align:left;
-vertical-align:top;
-border-bottom:1px solid var(--line);
-color:var(--mut);
-}
-
-.x-tbl tr:last-child td{
-border-bottom:0;
-}
-
-.x-tbl th{
-font:600 var(--t-xs) var(--mono);
-color:var(--dim);
-}
-
-.x-tbl td:first-child{
-color:var(--fg);
-}
-
-/* == Pills == */
-.x-pill{
-display:inline-block;
-padding:.25rem .45rem;
-border:1px solid currentColor;
-border-radius:var(--r1);
-font:600 var(--t-xs)/1 var(--mono);
-white-space:nowrap;
-}
-
-.x-pill.pass{
-color:var(--ok);
-}
-
-.x-pill.part{
-color:var(--warn);
-}
-
-.x-pill.user{
-color:var(--acc-t);
-}
-
-.x-pill.none{
-color:var(--dim);
-}
-
-/* == Lists == */
-.x-list{
-display:grid;
-gap:var(--s3);
-max-width:58rem;
-padding-left:1.1rem;
-color:var(--mut);
-line-height:1.7;
-}
-
-.x-list b{
-color:var(--fg);
-font-weight:500;
-}
-
-/* == Figures == */
-.x-fig{
-margin:0;
-}
-
-.x-fig img{
-display:block;
-width:100%;
-height:auto;
-border:1px solid var(--line);
-border-radius:var(--r2);
-background:#fff;
-}
-
-.x-fig figcaption{
-margin-top:var(--s2);
-color:var(--dim);
-font:500 var(--t-xs)/1.5 var(--mono);
-}
-
-/* == Hashes == */
-.x-hash{
-display:grid;
-gap:var(--s2);
-margin-top:var(--s4);
-}
-
-.x-hash button{
-display:grid;
-gap:.2rem;
-width:100%;
-padding:var(--s3) var(--s4);
-text-align:left;
-color:inherit;
-background:var(--bg2);
-border:1px solid var(--line);
-border-radius:var(--r1);
-cursor:pointer;
-transition:border-color .2s;
-}
-
-.x-hash button:hover,
-.x-hash button:focus-visible{
-border-color:var(--acc);
-}
-
-.x-hash span{
-font:600 var(--t-sm) var(--mono);
-}
-
-.x-hash code{
-font:500 var(--t-xs)/1.5 var(--mono);
-color:var(--dim);
-overflow-wrap:anywhere;
-}
-
-.x-sub{
-font:600 1.1rem var(--display);
-margin:var(--s6) 0 var(--s3);
-}
+.x-flow{display:grid;gap:var(--s3);margin:var(--s5) 0}
+.x-node{position:relative;padding:var(--s4);border:1px solid var(--line);border-radius:var(--r2);background:var(--bg2)}
+.x-node b{display:block;font:600 1.1rem var(--display)}.x-node small{display:block;margin-top:var(--s1);color:var(--mut);line-height:1.5}
+.x-node.key{border-color:var(--acc);z-index:1}
+@media(min-width:56rem){.x-flow{grid-template-columns:repeat(5,1fr);gap:0}.x-node{border-radius:0;margin-left:-1px}.x-node:first-child{border-radius:var(--r2) 0 0 var(--r2);margin:0}.x-node:last-child{border-radius:0 var(--r2) var(--r2) 0}}
+.x-grid{display:grid;gap:var(--s4);margin-top:var(--s5)}@media(min-width:48rem){.x-grid.two{grid-template-columns:1fr 1fr}}
+.x-card{padding:var(--s5);border:1px solid var(--line);border-radius:var(--r3);background:var(--bg2)}
+.x-card h3{font:600 1.35rem/1.2 var(--display);margin:.2rem 0 var(--s3)}.x-card p{color:var(--mut);line-height:1.7;margin-bottom:var(--s4)}
+.x-spec{display:grid;grid-template-columns:auto 1fr;gap:.4rem var(--s4);font:500 var(--t-sm)/1.5 var(--mono);margin-bottom:var(--s4)}.x-spec dt{color:var(--dim)}.x-spec dd{overflow-wrap:anywhere}
+.x-warn{max-width:58rem;padding-left:var(--s4);border-left:2px solid var(--warn);color:var(--mut);line-height:1.7;margin-top:var(--s4)}.x-warn b{color:var(--fg);font-weight:500}
+.x-steps{list-style:none;counter-reset:s;display:grid;gap:var(--s3);max-width:58rem}.x-steps li{counter-increment:s;display:grid;grid-template-columns:2.2rem 1fr;gap:var(--s3);color:var(--mut);line-height:1.7}
+.x-steps li::before{content:counter(s);font:600 1.1rem var(--display);color:var(--acc-t)}.x-steps b{color:var(--fg);font-weight:500}
+.x-code{overflow-x:auto;padding:var(--s4);border:1px solid var(--line);border-radius:var(--r2);background:var(--code);color:var(--code-fg);font:500 var(--t-sm)/1.7 var(--mono);margin:0}
+.x-tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r2)}.x-tbl table{width:100%;min-width:40rem;border-collapse:collapse;font-size:var(--t-sm)}
+.x-tbl th,.x-tbl td{padding:var(--s3) var(--s4);text-align:left;vertical-align:top;border-bottom:1px solid var(--line);color:var(--mut)}.x-tbl tr:last-child td{border-bottom:0}.x-tbl th{font:600 var(--t-xs) var(--mono);color:var(--dim)}.x-tbl td:first-child{color:var(--fg)}
+.x-pill{display:inline-block;padding:.25rem .45rem;border:1px solid currentColor;border-radius:var(--r1);font:600 var(--t-xs)/1 var(--mono);white-space:nowrap}.x-pill.pass{color:var(--ok)}.x-pill.part{color:var(--warn)}.x-pill.user{color:var(--acc-t)}.x-pill.none{color:var(--dim)}
+.x-list{display:grid;gap:var(--s3);max-width:58rem;padding-left:1.1rem;color:var(--mut);line-height:1.7}.x-list b{color:var(--fg);font-weight:500}
+.x-fig{margin:0}.x-fig img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:var(--r2);background:#fff}.x-fig figcaption{margin-top:var(--s2);color:var(--dim);font:500 var(--t-xs)/1.5 var(--mono)}
+.x-hash{display:grid;gap:var(--s2);margin-top:var(--s4)}.x-hash button{display:grid;gap:.2rem;width:100%;padding:var(--s3) var(--s4);text-align:left;color:inherit;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r1);cursor:pointer;transition:border-color .2s}
+.x-hash button:hover,.x-hash button:focus-visible{border-color:var(--acc)}.x-hash span{font:600 var(--t-sm) var(--mono)}.x-hash code{font:500 var(--t-xs)/1.5 var(--mono);color:var(--dim);overflow-wrap:anywhere}
+.x-sub{font:600 1.1rem var(--display);margin:var(--s6) 0 var(--s3)}
 </style>
 <link rel="stylesheet" href="assets/theme.css">
 <script type="application/ld+json">
@@ -590,4 +318,4 @@ margin:var(--s6) 0 var(--s3);
 <script src="assets/docs.js" defer></script>
 <script src="assets/enhance.js" defer></script>
 </body>
-</html>
+                                          </html>
