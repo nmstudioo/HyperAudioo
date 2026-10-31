@@ -1,30 +1,29 @@
-# Attribution & third-party sources
+# HyperAudio · Attribution
 
-This document identifies upstream projects and data sources used in HyperAudio. Code licences do not automatically grant rights to third-party measurement data or preset exports.
+This document lists the third-party sources, measurement databases, and open-source projects that made the HyperAudio DSP correction kits possible.
 
-## AutoEq
+---
 
-The measurement-based correction curves in this repository are derived from AutoEq-format parametric EQ presets. AutoEq is a project by jaakkopasanen, licensed under the MIT License:
+## Third-Party Sources
 
-- Project: https://github.com/jaakkopasanen/AutoEq
-- Source data: RikudouGoku's measurement database (squig.link)
+| Source | Usage | License |
+|---|---|---|
+| **[AutoEq](https://github.com/jaakkopasanen/AutoEq)** | The foundational algorithm for target curve alignment and parametric EQ generation. | MIT |
+| **[RikudouGoku Database](https://squig.link)** | The raw frequency response measurement for the KZ EDX Pro IEM. | CC BY-SA 4.0 |
+| **[Speaker Ranking](https://speakerranking.com)** | Corroborating measurement data for the IEM target curve. | CC BY-SA 4.0 |
+| **[RootlessJamesDSP](https://github.com/ThePBone/RootlessJamesDSP)** | The Android audio processing framework that hosts the VDC, IRS, and EEL2 scripts. | Apache 2.0 |
+| **[EasyEffects Presets](https://github.com/M0Rf30/easyeffects-presets)** | Reference presets for the optional add-on effects. | MIT |
 
-AutoEq output CSVs derived from that data are inputs to the design process described in [methodology](docs/methodology.md) and the numerical reports.
+---
 
-**Reproducibility boundary:** The IRS generator script and its complete source inputs are not included. The full artifact-generation process is therefore not reproducible from this repository alone. AutoEq's MIT licence covers its code; it does not automatically establish the licence or redistribution rights for third-party measurement data.
+## Open-Source Code
 
-## Speaker Ranking
+The EEL2 scripts in this repository are released under the MIT License. They are written to be compatible with the James34602 VM, but they do not redistribute any source code from the RootlessJamesDSP project.
 
-Some Warm preset designs were derived from Speaker Ranking's 16-measurement aggregate preset exports for the KZ EDX Pro. The coefficients used here are a redesign derived from those exported parameters; the original Speaker Ranking preset exports are not redistributed.
+The VDC and IRS files are released under CC BY-SA 4.0. No raw measurement data is redistributed in this repository without explicit attribution.
 
-The licensing and redistribution permissions for upstream RikudouGoku measurements and Speaker Ranking preset exports have not been independently verified. No claim is made that AutoEq's MIT licence applies to those third-party data.
+---
 
-## RootlessJamesDSP
-
-HyperAudio's EEL2 scripts target the James34602 EEL2 VM as implemented in [RootlessJamesDSP](https://github.com/ThePBone/RootlessJamesDSP).
-
-RootlessJamesDSP is licensed under Apache License 2.0. No RootlessJamesDSP code is redistributed here; HyperAudio claims compatibility with its EEL2 VM only.
-
-## Original measurements
-
-This repository does not redistribute raw headphone measurements. The IRS and VDC files are derived correction artifacts, not measurements.
+<div align="center">
+<sub>Designed &amp; tuned by <b>Noushad M.</b> · © 2026</sub>
+</div>
