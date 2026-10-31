@@ -238,31 +238,40 @@ if(!a||a.err){
 cs=null;
 $('#line').setAttribute('d','');
 $('#area').setAttribute('d','');
+$('#dot')&&$('#dot').setAttribute('r',0);
 $('#chartSum').textContent=a?'Response unavailable: '+a.err:'';
 return;
 }
-const H=Math.round(Math.max(220,Math.min(400,W*.42))),m={l:36,r:10,t:12,b:34};
+const H=Math.round(Math.max(236,Math.min(400,W*.44))),m={l:W<420?30:38,r:10,t:24,b:34};
 const data=Array.from({length:240},(_,i)=>{
 const f=20*1000**(i/239);
 return[f,a.resp(f)];
 });
-cs={data,W,m};
 const ys=data.map(d=>d[1]),lo=Math.min(...ys),hi=Math.max(...ys),pad=Math.max(1.5,(hi-lo)*.1),y0=Math.floor(lo-pad),y1=Math.ceil(hi+pad),sp=y1-y0,st=sp>30?10:sp>12?5:2;
 const X=v=>m.l+Math.log10(v/20)/3*(W-m.l-m.r),Y=v=>m.t+(y1-v)/(y1-y0)*(H-m.t-m.b);
+cs={data,W,m,X,Y,r1:a.resp(1000)};
 $('#chartSvg').setAttribute('viewBox',`0 0 ${W} ${H}`);
-const txt=(x,y,t,an)=>{
-svg('text',{x,y,'text-anchor':an,class:'ax'},g).textContent=t;
+const txt=(x,y,t,an,c)=>{
+svg('text',{x,y,'text-anchor':an,class:'ax'+(c?' '+c:'')},g).textContent=t;
 };
+/* horizontal dB grid; the 0 dB line is the project gate */
 for(let v=Math.ceil(y0/st)*st;v<=y1;v+=st){
 const y=Y(v);
 svg('line',{x1:m.l,x2:W-m.r,y1:y,y2:y,class:v?'gl':'gl z'},g);
-txt(m.l-6,y+4,v,'end');
+txt(m.l-6,y+3.5,v,'end',v?'':'zl');
+if(!v)txt(m.l+6,y-5,'0 dB gate','start','zl');
 }
+txt(m.l-6,11,'dB','end','unit');
+/* octave-ish frequency grid */
 [20,50,100,200,500,1e3,2e3,5e3,1e4,2e4].forEach(v=>{
 const x=X(v);
 svg('line',{x1:x,x2:x,y1:m.t,y2:H-m.b,class:'gl'},g);
 txt(x,H-16,v>=1e3?v/1e3+'k':v,'middle');
 });
+txt((m.l+W-m.r)/2,H-3,'Hz','middle','unit');
+/* tonal bands */
+[250,4e3].forEach(v=>svg('line',{x1:X(v),x2:X(v),y1:6,y2:H-m.b,class:'gl b'},g));
+[[20,250,'Bass'],[250,4e3,'Mids'],[4e3,2e4,'Treble']].forEach(([lo_,hi_,n])=>txt(X(Math.sqrt(lo_*hi_)),12,n,'middle','band'));
 const d=data.map((q,i)=>(i?'L':'M')+X(q[0]).toFixed(1)+' '+Y(q[1]).toFixed(1)).join('');
 $('#line').setAttribute('d',d);
 $('#area').setAttribute('d',`${d}L${X(2e4)} ${Y(y0)}L${X(20)} ${Y(y0)}Z`);
@@ -271,7 +280,21 @@ c.setAttribute('y1',m.t);
 c.setAttribute('y2',H-m.b);
 c.style.display='none';
 $('#tip').hidden=true;
+/* peak and dip markers */
 const mx=data.reduce((p,q)=>q[1]>p[1]?q:p),mn=data.reduce((p,q)=>q[1]<p[1]?q:p);
+const mark=(q,cls,up)=>{
+const x=X(q[0]),y=Y(q[1]),an=x<m.l+34?'start':x>W-m.r-34?'end':'middle',dx=an=='start'?-4:an=='end'?4:0;
+svg('circle',{cx:x,cy:y,r:3.6,class:'mk '+cls},g);
+svg('text',{x:x+dx,y:y+(up?-9:17),'text-anchor':an,class:'mk-t'},g).textContent=(q[1]>0?'+':'')+q[1].toFixed(1)+' dB';
+};
+if(hi-lo>.6){
+mark(mx,'hi',1);
+mark(mn,'lo',0);
+}
+/* cursor dot rides the curve */
+let dot=$('#dot');
+if(!dot)dot=svg('circle',{id:'dot',r:0},$('#chartSvg'));
+dot.setAttribute('r',0);
 $('#chartSum').textContent=`${PROF[cur].name}: peak ${mx[1].toFixed(1)} dB near ${Math.round(mx[0])} Hz, dip ${mn[1].toFixed(1)} dB near ${Math.round(mn[0])} Hz.`;
 if(anim){
 host.classList.remove('draw');
@@ -282,21 +305,28 @@ host.classList.add('draw');
 
 function tip(f){
 if(!cs)return;
-const{data,W,m}=cs,host=$('#chart'),t=$('#tip'),x=m.l+Math.log10(f/20)/3*(W-m.l-m.r),i=Math.max(0,Math.min(239,Math.round(Math.log10(f/20)/3*239)));
+const{data,W,m,X,Y,r1}=cs,host=$('#chart'),t=$('#tip'),x=X(f),i=Math.max(0,Math.min(239,Math.round(Math.log10(f/20)/3*239))),g=data[i][1],rel=g-r1;
 $('#tip-f').textContent=Math.round(f)+' Hz';
-$('#tip-g').textContent=data[i][1].toFixed(1)+' dB';
+$('#tip-g').textContent=g.toFixed(1)+' dB';
+$('#tip-r').textContent=(rel>=0?'+':'−')+Math.abs(rel).toFixed(1)+' dB';
 t.hidden=false;
 t.style.left=Math.max(4,Math.min(host.clientWidth-t.offsetWidth-4,x+8-t.offsetWidth/2))+'px';
 const c=$('#cur');
 c.setAttribute('x1',x);
 c.setAttribute('x2',x);
 c.style.display='';
+const dot=$('#dot');
+dot.setAttribute('cx',x);
+dot.setAttribute('cy',Y(g));
+dot.setAttribute('r',4.5);
 host._f=f;
 }
 
 const hideTip=()=>{
 $('#tip').hidden=true;
 $('#cur').style.display='none';
+const d=$('#dot');
+d&&d.setAttribute('r',0);
 };
 
 /* == Render == */
@@ -424,10 +454,21 @@ const f=20*1000**(i/126);
 return f.toFixed(1)+' '+a.resp(f).toFixed(1);
 }).join('; ')).then(ok=>toast(ok?'Copied · GraphicEQ':'Copy failed',!ok)));
 $('#btnAB').onclick=runAB;
-$('#themeBtn').onclick=()=>{
-const t=document.documentElement.dataset.theme=='dark'?'light':'dark';
+const THEME_BG={dark:'#0c100f',light:'#f3f5f0'};
+const applyTheme=t=>{
 document.documentElement.dataset.theme=t;
+document.querySelectorAll('meta[name=theme-color]').forEach((m,i)=>{
+if(!i)m.removeAttribute('media');
+m.content=THEME_BG[t];
+if(i)m.remove();
+});
+};
+$('#themeBtn').onclick=()=>{
+const t=document.documentElement.dataset.theme=='dark'?'light':'dark',go=()=>{
+applyTheme(t);
 try{localStorage.theme=t}catch{}
+};
+document.startViewTransition&&!calm()?document.startViewTransition(go):go();
 };
 matchMedia('(prefers-color-scheme:light)').addEventListener('change',e=>{
 let s;
@@ -477,19 +518,17 @@ const up=$('#toTop');
 up.onclick=()=>scrollTo({top:0});
 if(window.IntersectionObserver){
 new IntersectionObserver(([e])=>up.classList.toggle('show',!e.isIntersecting)).observe($('.hero'));
+/* the response curve draws in when it is first seen, not while it is off-screen */
 if(!calm()){
-const io=new IntersectionObserver(es=>es.forEach(e=>{
-if(e.isIntersecting||e.boundingClientRect.top<0){
-e.target.classList.add('in');
-io.unobserve(e.target);
-}
-}),{rootMargin:'0px 0px -6% 0px'});
-$$('.sec,.foot').forEach(s=>{
-if(s.getBoundingClientRect().top<innerHeight)return;
-s.classList.add('rv');
-io.observe(s);
-});
-document.documentElement.classList.add('rv-on');
+const seen=new IntersectionObserver(([e])=>{
+if(!e.isIntersecting)return;
+seen.disconnect();
+if(!cs)return;
+ch.classList.remove('draw');
+void ch.offsetWidth;
+ch.classList.add('draw');
+},{threshold:.35});
+seen.observe(ch);
 }
 }
 
