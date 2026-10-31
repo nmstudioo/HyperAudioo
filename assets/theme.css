@@ -1,0 +1,50 @@
+/* HyperAudio theme layer. Bench-instrument styling. Load after style.css. */
+:root{--r1:2px;--r2:6px;--r3:10px;--grid:#e2ece50f;--grid2:#e2ece507;--tick:#e2ece538;--ease:cubic-bezier(.2,.8,.2,1)}
+[data-theme=light]{--grid:#182a1d14;--grid2:#182a1d08;--tick:#182a1d44}
+html{scrollbar-width:thin;scrollbar-color:var(--tick) transparent}
+body{font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),linear-gradient(var(--grid2) 1px,transparent 1px),linear-gradient(90deg,var(--grid2) 1px,transparent 1px);
+background-size:96px 96px,96px 96px,24px 24px,24px 24px;
+-webkit-mask-image:radial-gradient(120% 75% at 50% 0,#000 25%,transparent 78%);mask-image:radial-gradient(120% 75% at 50% 0,#000 25%,transparent 78%)}
+::selection{background:var(--acc);color:var(--ink)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:var(--r1)}
+
+/* Section headers become a ruler: minor ticks every 8px, major every 64px, accent datum at the left */
+.sec-h{position:relative;border-top:0;padding-top:calc(var(--s4) + 14px)}
+.sec-h::before{content:"";position:absolute;inset:0 0 auto;height:10px;border-top:1px solid var(--tick);
+background:repeating-linear-gradient(90deg,var(--tick) 0 1px,transparent 1px 8px) top/100% 5px no-repeat,repeating-linear-gradient(90deg,var(--tick) 0 1px,transparent 1px 64px) top/100% 10px no-repeat}
+.sec-h::after{content:"";position:absolute;top:-1px;left:0;width:3rem;height:2px;background:var(--acc)}
+.sec-h h2{letter-spacing:-.045em}
+.sec-h .lbl:first-child{font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.lbl{letter-spacing:.06em}
+
+/* Containers share one border logic: hairline, small radius, accent datum when active */
+.prow,.chart,.stats,.frow,.seal,.x-card,.x-node,.x-tbl,.x-code,.x-hash button,.x-fig img,.hero-art{border-color:var(--line)}
+.prow{transition:border-color .25s var(--ease),transform .25s var(--ease)}
+.prow:hover{border-color:color-mix(in srgb,var(--acc) 55%,var(--line))}
+.prow[aria-pressed=true]{box-shadow:inset 3px 0 0 var(--acc),0 1rem 3rem var(--shadow)}
+.stats{background-image:linear-gradient(90deg,var(--acc) 0 2.5rem,transparent 2.5rem);background-size:100% 2px;background-repeat:no-repeat}
+.stat b,.st-v{font-feature-settings:"tnum" 1,"zero" 1}
+.x-card,.x-node{background-image:linear-gradient(var(--acc),var(--acc));background-size:1.25rem 2px;background-repeat:no-repeat}
+.x-node.key{box-shadow:0 0 0 1px var(--acc),0 0 2.5rem color-mix(in srgb,var(--acc) 14%,transparent)}
+.x-tbl th{background:color-mix(in srgb,var(--bg2) 70%,transparent);letter-spacing:.06em}
+.x-tbl tbody tr:hover td{background:color-mix(in srgb,var(--acc) 4%,transparent)}
+.x-pill{border-radius:var(--r1);letter-spacing:.04em}
+.x-steps li::before{width:2rem;height:2rem;display:grid;place-items:center;border:1px solid var(--tick);border-radius:50%;font-size:.95rem}
+.x-hash button:hover span{color:var(--acc-t)}
+
+/* Buttons and nav */
+.btn{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--acc) 55%,#000);letter-spacing:-.01em}
+.nav a{position:relative;transition:color .2s}
+.nav a[aria-current=true]{color:var(--acc-t)}
+.nav a[aria-current=true]::after{content:"";position:absolute;left:0;right:0;bottom:-.5rem;height:2px;background:var(--acc)}
+
+/* Signature element: the page is a 20 Hz to 20 kHz sweep. Scroll position maps to frequency on a log scale */
+#sweep{position:fixed;inset:0 0 auto;z-index:60;height:2px;pointer-events:none;background:linear-gradient(90deg,transparent,var(--acc) 70%,var(--acc-t));transform:scaleX(var(--p,0));transform-origin:0 50%;box-shadow:0 0 12px color-mix(in srgb,var(--acc) 70%,transparent)}
+#read{position:fixed;left:max(var(--s4),env(safe-area-inset-left));bottom:max(var(--s4),env(safe-area-inset-bottom));z-index:39;display:none;gap:.6rem;align-items:baseline;padding:.4rem .6rem;border:1px solid var(--line);border-radius:var(--r1);background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(12px);font:600 var(--t-xs)/1 var(--mono);color:var(--mut);pointer-events:none}
+#read b{color:var(--acc-t);min-width:5.2ch;text-align:right}
+@media(min-width:48rem){#read{display:flex}}
+
+@media(prefers-reduced-motion:reduce){#sweep{transition:none}.prow,.nav a{transition:none}}
+@media print{body::before,#sweep,#read{display:none}}
