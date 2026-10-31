@@ -28,42 +28,43 @@ flowchart LR
     D --> E[Output to DAC]
 ```
 
-[!IMPORTANT]
-The VDC and IRS must never apply the same EQ twice. In the HyperAudio architecture, the VDC is intentionally left as an identity filter, allowing the IRS to act as the sole tonal authority.
+> [!IMPORTANT]
+> The VDC and IRS must never apply the same EQ twice. In the HyperAudio architecture, the VDC is intentionally left as an identity filter, allowing the IRS to act as the sole tonal authority.
 
 ---
 
-The data/ Directory
+## The `data/` Directory
 
-The data/ directory serves as the empirical foundation of the project. It contains the raw measurement data and the target curves used to generate the IRS files offline.
+The `data/` directory serves as the empirical foundation of the project. It contains the raw measurement data and the target curves used to generate the IRS files offline.
 
-Directory Contents
-data/Raw/ Contains the raw frequency response measurements (.txt) for the KZ EDX Pro and Redmi 12.
-data/target/ Contains the custom target curves (.txt) used to calculate the delta.
+### Directory contents
 
-For a detailed explanation of how these curves are generated and aligned, see Raw and Target Curves.
+- `data/Raw/` contains the raw frequency response measurements (`.txt`) for the KZ EDX Pro and Redmi 12.
+- `data/target/` contains the custom target curves (`.txt`) used to calculate the delta.
 
----
-
-The addons/ Directory
-
-The addons/ folder contains optional effects that do not form part of the core correction chain.
-
-· IRS Add-ons: BBE SonicMax.irs and EFOtech MLV...irs can be loaded into the Convolver instead of the core IRS to provide phase alignment or spatial crossfeed.
-· JSON Presets: Reference files for EasyEffects that must be manually replicated in RootlessJamesDSP.
-
-[!WARNING]
-Loading an add-on IRS replaces the core IRS. You cannot use them simultaneously. Always lower the volume before swapping, as add-on IRS files are not level-matched to the core gates.
+For a detailed explanation of how these curves are generated and aligned, see [Raw and Target Curves](../data/methodology.md).
 
 ---
 
-Verification Harness
+## The `addons/` Directory
+
+The `addons/` folder contains optional effects that do not form part of the core correction chain.
+
+- **IRS add-ons:** `BBE SonicMax.irs` and `EFOtech MLV…irs` can be loaded into the Convolver instead of the core IRS to provide phase alignment or spatial crossfeed.
+- **JSON presets:** reference files for EasyEffects that must be manually replicated in RootlessJamesDSP.
+
+> [!WARNING]
+> Loading an add-on IRS replaces the core IRS. You cannot use them simultaneously. Always lower the volume before swapping, as add-on IRS files are not level-matched to the core gates.
+
+---
+
+## Verification Harness
 
 The browser site includes a verification harness that fetches the repository assets and runs offline checks.
 
-· It verifies the file format (e.g., IEEE Float32, 50-value VDC lines).
-· It runs a digital magnitude response check on the IRS.
-· It does not emulate the ARM processor, the Android audio thread, or the physical acoustics of the hardware.
+- It verifies the file format (e.g., IEEE Float32, 50-value VDC lines).
+- It runs a digital magnitude response check on the IRS.
+- It does not emulate the ARM processor, the Android audio thread, or the physical acoustics of the hardware.
 
 ---
 
