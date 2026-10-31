@@ -33,6 +33,30 @@
 <link rel="preload" href="assets/fonts/geist-mono.woff2" as="font" type="font/woff2" crossorigin>
 <script>document.documentElement.dataset.theme=(()=>{try{return localStorage.theme}catch{}})()||(matchMedia("(prefers-color-scheme:light)").matches?"light":"dark")</script>
 <link rel="stylesheet" href="assets/style.css">
+<style>
+.x-flow{display:grid;gap:var(--s3);margin:var(--s5) 0}
+.x-node{position:relative;padding:var(--s4);border:1px solid var(--line);border-radius:var(--r2);background:var(--bg2)}
+.x-node b{display:block;font:600 1.1rem var(--display)}.x-node small{display:block;margin-top:var(--s1);color:var(--mut);line-height:1.5}
+.x-node.key{border-color:var(--acc);z-index:1}
+@media(min-width:56rem){.x-flow{grid-template-columns:repeat(5,1fr);gap:0}.x-node{border-radius:0;margin-left:-1px}.x-node:first-child{border-radius:var(--r2) 0 0 var(--r2);margin:0}.x-node:last-child{border-radius:0 var(--r2) var(--r2) 0}}
+.x-grid{display:grid;gap:var(--s4);margin-top:var(--s5)}@media(min-width:48rem){.x-grid.two{grid-template-columns:1fr 1fr}}
+.x-card{padding:var(--s5);border:1px solid var(--line);border-radius:var(--r3);background:var(--bg2)}
+.x-card h3{font:600 1.35rem/1.2 var(--display);margin:.2rem 0 var(--s3)}.x-card p{color:var(--mut);line-height:1.7;margin-bottom:var(--s4)}
+.x-spec{display:grid;grid-template-columns:auto 1fr;gap:.4rem var(--s4);font:500 var(--t-sm)/1.5 var(--mono);margin-bottom:var(--s4)}.x-spec dt{color:var(--dim)}.x-spec dd{overflow-wrap:anywhere}
+.x-warn{max-width:58rem;padding-left:var(--s4);border-left:2px solid var(--warn);color:var(--mut);line-height:1.7;margin-top:var(--s4)}.x-warn b{color:var(--fg);font-weight:500}
+.x-steps{list-style:none;counter-reset:s;display:grid;gap:var(--s3);max-width:58rem}.x-steps li{counter-increment:s;display:grid;grid-template-columns:2.2rem 1fr;gap:var(--s3);color:var(--mut);line-height:1.7}
+.x-steps li::before{content:counter(s);font:600 1.1rem var(--display);color:var(--acc-t)}.x-steps b{color:var(--fg);font-weight:500}
+.x-code{overflow-x:auto;padding:var(--s4);border:1px solid var(--line);border-radius:var(--r2);background:var(--code);color:var(--code-fg);font:500 var(--t-sm)/1.7 var(--mono);margin:0}
+.x-tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r2)}.x-tbl table{width:100%;min-width:40rem;border-collapse:collapse;font-size:var(--t-sm)}
+.x-tbl th,.x-tbl td{padding:var(--s3) var(--s4);text-align:left;vertical-align:top;border-bottom:1px solid var(--line);color:var(--mut)}.x-tbl tr:last-child td{border-bottom:0}.x-tbl th{font:600 var(--t-xs) var(--mono);color:var(--dim)}.x-tbl td:first-child{color:var(--fg)}
+.x-pill{display:inline-block;padding:.25rem .45rem;border:1px solid currentColor;border-radius:var(--r1);font:600 var(--t-xs)/1 var(--mono);white-space:nowrap}.x-pill.pass{color:var(--ok)}.x-pill.part{color:var(--warn)}.x-pill.user{color:var(--acc-t)}.x-pill.none{color:var(--dim)}
+.x-list{display:grid;gap:var(--s3);max-width:58rem;padding-left:1.1rem;color:var(--mut);line-height:1.7}.x-list b{color:var(--fg);font-weight:500}
+.x-fig{margin:0}.x-fig img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:var(--r2);background:#fff}.x-fig figcaption{margin-top:var(--s2);color:var(--dim);font:500 var(--t-xs)/1.5 var(--mono)}
+.x-hash{display:grid;gap:var(--s2);margin-top:var(--s4)}.x-hash button{display:grid;gap:.2rem;width:100%;padding:var(--s3) var(--s4);text-align:left;color:inherit;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r1);cursor:pointer;transition:border-color .2s}
+.x-hash button:hover,.x-hash button:focus-visible{border-color:var(--acc)}.x-hash span{font:600 var(--t-sm) var(--mono)}.x-hash code{font:500 var(--t-xs)/1.5 var(--mono);color:var(--dim);overflow-wrap:anywhere}
+.x-sub{font:600 1.1rem var(--display);margin:var(--s6) 0 var(--s3)}
+</style>
+
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"HyperAudio","applicationCategory":"MultimediaApplication","operatingSystem":"Android (RootlessJamesDSP)","url":"https://nmstudioo.github.io/HyperAudioo/","image":"https://nmstudioo.github.io/HyperAudioo/assets/og-image.png","author":{"@type":"Person","name":"Noushad M."},"license":"https://opensource.org/licenses/MIT","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
@@ -63,10 +87,12 @@
 <header class="bar">
 <a class="brand" href="#top"><img src="assets/logo.svg" alt="" width="24" height="24">HyperAudio</a>
 <nav class="nav" aria-label="Sections">
+<a href="#chain">Chain</a>
 <a href="#choose">Profiles</a>
 <a href="#inspect">Response</a>
 <a href="#export">Export</a>
 <a href="#qa">Quality</a>
+<a href="#evidence">Evidence</a>
 <a href="#docs">Docs</a>
 </nav>
 <a href="#qa" id="qaChip" class="chip">QA …</a>
@@ -98,8 +124,16 @@
 <div class="art-bottom"><span>FREQUENCY / AMPLITUDE</span><b>20 Hz <span>—</span> 20 kHz</b></div><div class="art-index">01<span> / </span>02</div>
 </div>
 </section>
+<section id="chain" class="sec wrap">
+<header class="sec-h"><span class="lbl">01</span><h2>Signal chain</h2></header>
+<p class="qa-note">HyperAudio publishes two device profiles, and their deployment is not identical. The KZ EDX Pro runs the three-file chain below. The Redmi 12 keeps its frozen V6 three-file assets, but its current guide uses a standalone EEL2 PEQ instead. Never combine the two Speaker setups.</p>
+<div class="stats"><div class="stat"><span class="lbl">Device profiles</span><b>2</b><small>KZ EDX Pro, Redmi 12</small></div><div class="stat"><span class="lbl">Files per chain</span><b>3</b><small>VDC, IRS, EEL2</small></div><div class="stat"><span class="lbl">IRS host rate</span><b>48 kHz</b><small>verify the running rate</small></div><div class="stat"><span class="lbl">Tonal stages</span><b>1</b><small>no duplicated EQ</small></div></div>
+<div class="x-flow" role="list"><div class="x-node" role="listitem"><b>Source</b><small>Any app audio</small></div><div class="x-node" role="listitem"><b>VDC</b><small>Identity filterbank. Passes audio unchanged</small></div><div class="x-node key" role="listitem"><b>IRS</b><small>Minimum-phase FIR. Carries all tonal correction</small></div><div class="x-node" role="listitem"><b>EEL2 Liveprog</b><small>Effects or limiter-only path</small></div><div class="x-node" role="listitem"><b>Output</b><small>IEM or speaker</small></div></div>
+<p class="x-warn"><b>One correction stage only.</b> Tonal correction lives in the IRS. Loading the same EQ in more than one stage applies it more than once.</p>
+<p class="x-warn"><b>Speaker split.</b> The Redmi 12 setting guide describes standalone Liveprog PEQ plus limiter. It replaces the older VDC, IRS and limiter chain, so do not load the VDC or IRS with it.</p>
+</section>
 <section id="choose" class="sec wrap">
-<header class="sec-h"><span class="lbl">01</span><h2>Choose a profile</h2></header>
+<header class="sec-h"><span class="lbl">02</span><h2>Choose a profile</h2></header>
 <div class="plist" id="profiles" role="group" aria-label="Profile">
 <button class="prow" type="button" data-k="iem" data-name="KZ EDX Pro" data-irs="edx_pro/HA_IEM_v3.irs" data-eel="edx_pro/HA_IEM_v3.eel" data-vdc="edx_pro/HA_IEM_v3.vdc" aria-pressed="true">
 <svg class="i lg" aria-hidden="true"><use href="#i-headphones"/></svg>
@@ -124,9 +158,23 @@
 <svg class="spark" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true"><path/></svg>
 </button>
 </div>
+<div class="x-grid two">
+<article class="x-card"><span class="lbl">IEM</span><h3>KZ EDX Pro</h3><dl class="x-spec"><dt>Folder</dt><dd>edx_pro/</dd><dt>Release</dt><dd>v3 IRS, v5 EEL</dd><dt>IRS</dt><dd>2048 taps, 48 kHz</dd><dt>Driver</dt><dd>24 Ω, 112 dB/mW</dd><dt>EEL paths</dt><dd>Effects or Limiter only</dd></dl><p>The IEM voicing is a labelled design choice, not a measurement-derived target.</p><div class="links"><a href="https://github.com/nmstudioo/HyperAudioo/blob/main/edx_pro/Setting_Guide_IEM.md" data-doc="edx_pro/Setting_Guide_IEM.md">Setting guide</a><a href="https://github.com/nmstudioo/HyperAudioo/blob/main/edx_pro/report_EDX_HA.md" data-doc="edx_pro/report_EDX_HA.md">Technical report</a></div></article>
+<article class="x-card"><span class="lbl">Speaker</span><h3>Redmi 12</h3><dl class="x-spec"><dt>Folder</dt><dd>Redmi_12/</dd><dt>Release</dt><dd>V6, frozen</dd><dt>IRS</dt><dd>8192 taps, 48 kHz</dd><dt>Current guide</dt><dd>Standalone EEL2 PEQ</dd></dl><p>The frozen V6 three-file assets stay in the repository and are documented in the technical report. The setting guide uses a separate standalone configuration.</p><div class="links"><a href="https://github.com/nmstudioo/HyperAudioo/blob/main/Redmi_12/Setting_Guide_S.md" data-doc="Redmi_12/Setting_Guide_S.md">Standalone guide</a><a href="https://github.com/nmstudioo/HyperAudioo/blob/main/Redmi_12/report_Redmi_12.md" data-doc="Redmi_12/report_Redmi_12.md">V6 report</a></div></article></div>
+</section>
+<section id="start" class="sec wrap">
+<header class="sec-h"><span class="lbl">03</span><h2>Quick start</h2></header>
+<ol class="x-steps"><li><span><b>Pick the right guide first.</b> The IEM guide uses the three-file chain. The Speaker guide uses standalone Liveprog PEQ and excludes its VDC and IRS files.</span></li><li><span><b>Set the host to 48 kHz</b> and verify the running rate. Set convolver preamp to 0 dB for the IEM chain.</span></li><li><span><b>Turn off other processing:</b> extra EQ, bass enhancement and OEM sound effects.</span></li><li><span><b>Load in order:</b> DDC (.vdc), then Convolver (.irs), then Liveprog (.eel).</span></li><li><span><b>Start at low volume</b> and confirm the profile and processing mode.</span></li></ol>
+<div class="x-grid two"><pre class="x-code">Redmi_12/
+├── HA_Speaker_Master.vdc
+├── HA_Speaker_Master.irs
+└── HA_Speaker_Master.eel</pre><pre class="x-code">edx_pro/
+├── HA_IEM_v3.vdc
+├── HA_IEM_v3.irs
+└── HA_IEM_v3.eel</pre></div>
 </section>
 <section id="inspect" class="sec wrap">
-<header class="sec-h"><span class="lbl">02</span><h2>Response &amp; safety</h2></header>
+<header class="sec-h"><span class="lbl">04</span><h2>Response &amp; safety</h2></header>
 <noscript><p class="qa-note">JavaScript is required for the response chart and in-browser verification. The files remain downloadable below.</p></noscript>
 <div class="chart" id="chart" tabindex="0" role="group" aria-label="Frequency response chart; hover or use arrow keys">
 <svg id="chartSvg" role="img" aria-label="Frequency response of the hosted IRS">
@@ -150,7 +198,7 @@
 </div>
 </section>
 <section id="export" class="sec wrap">
-<header class="sec-h"><span class="lbl">03</span><h2>Export</h2></header>
+<header class="sec-h"><span class="lbl">05</span><h2>Export</h2></header>
 <button class="btn" type="button" data-all><svg class="i" aria-hidden="true"><use href="#i-download"/></svg>Download all 3 files</button>
 <div class="files" role="group" aria-label="Files">
 <a class="frow" id="dl-irs" href="edx_pro/HA_IEM_v3.irs" download><svg class="i" aria-hidden="true"><use href="#i-wave"/></svg><span><b>Impulse response (IRS)</b><small></small></span><svg class="i" aria-hidden="true"><use href="#i-download"/></svg></a>
@@ -160,7 +208,7 @@
 </div>
 </section>
 <section id="qa" class="sec wrap">
-<header class="sec-h"><span class="lbl">04</span><h2>Quality assurance</h2><span class="chip" id="qaBadge">…</span></header>
+<header class="sec-h"><span class="lbl">06</span><h2>Quality assurance</h2><span class="chip" id="qaBadge">…</span></header>
 <p class="qa-note">The hosted files are fetched and checked in your browser: IRS format, finite samples, L = R, peak ≤ 0 dBFS, max gain &lt; 0 dB, L1 ≤ 1.25, tail ≤ −80 dBFS; identity DDC; EEL structure and slider ranges.</p>
 <details class="seal">
 <summary><span class="st" id="qaSeal">Verifying…</span><svg class="i chev" aria-hidden="true"><use href="#i-chev"/></svg></summary>
@@ -182,8 +230,18 @@
 </div>
 <div class="console" id="console" role="log" aria-live="polite">Ready.</div>
 </section>
+<section id="evidence" class="sec wrap">
+<header class="sec-h"><span class="lbl">07</span><h2>Evidence and limits</h2></header>
+<div class="x-tbl"><table><thead><tr><th>Component</th><th>Offline / numerical</th><th>App or device</th><th>Listening</th></tr></thead><tbody><tr><td>Speaker VDC</td><td><span class="x-pill pass">PASS</span> identity</td><td><span class="x-pill user">USER REPORTED</span></td><td><span class="x-pill user">USER REPORTED</span></td></tr><tr><td>Speaker IRS</td><td><span class="x-pill pass">PASS</span></td><td><span class="x-pill user">USER REPORTED</span></td><td><span class="x-pill user">USER REPORTED</span></td></tr><tr><td>Speaker EEL</td><td><span class="x-pill part">PARTIAL</span> compile, ceiling, bypass; non-finite rerun pending</td><td><span class="x-pill user">USER REPORTED</span></td><td><span class="x-pill user">USER REPORTED</span></td></tr><tr><td>IEM VDC</td><td><span class="x-pill pass">PASS</span> identity</td><td>—</td><td>—</td></tr><tr><td>IEM IRS</td><td><span class="x-pill pass">PASS</span></td><td><span class="x-pill none">NOT RUN</span></td><td><span class="x-pill none">NOT RUN</span></td></tr><tr><td>IEM EEL effects path</td><td>Prior v4 checks: effects, ceiling, bypass, non-finite</td><td><span class="x-pill none">NOT RUN</span> for current v5</td><td><span class="x-pill none">NOT RUN</span></td></tr><tr><td>IEM EEL v5 mode selector</td><td>Source review only; VM retest pending</td><td><span class="x-pill none">NOT RUN</span></td><td><span class="x-pill none">NOT RUN</span></td></tr></tbody></table></div><p class="x-warn"><b>Evidence boundary.</b> Offline checks use a source-built JamesDSP VM on x86_64. They are not native ARM, RootlessJamesDSP app, device or listening tests. Numerically qualified does not mean device validated.</p><h3 class="x-sub">Known limitations</h3><ul class="x-list"><li><b>Reproducibility.</b> iem_build.py, generate_irs.py and the source inputs are not included, so the IRS cannot be regenerated from this repository alone.</li><li><b>Speaker IRS provenance.</b> The measurement setup is not documented. Any microphone response in the source measurement is also in the filter.</li><li><b>IEM voicing.</b> It has no measurement behind it and is a design choice.</li><li><b>Spatial processing.</b> The IEM surround feature is crossfeed plus width, not HRTF virtualisation.</li><li><b>ARM.</b> EEL tests ran on x86_64. The v5 processing-mode selector has not been VM- or device-tested.</li><li><b>Limiter scope.</b> Sample-peak limiting is not true-peak limiting or driver-excursion protection.</li><li><b>Sample rate.</b> The IRS assets are 48 kHz only. Another host rate changes timing and frequency behaviour.</li></ul>
+</section>
+<section id="targets" class="sec wrap">
+<header class="sec-h"><span class="lbl">08</span><h2>Raw and target curves</h2></header>
+<p class="qa-note">Each correction is fitted against a target curve, in dB relative to 1 kHz. Both targets are custom, built offline, and not published standards. Listening results outrank the curves.</p>
+<div class="x-grid two"><figure class="x-fig"><img src="assets/KZ_EDX_Pro_target.png" alt="KZ EDX Pro raw response vs target" loading="lazy" width="1040" height="585"><figcaption>KZ EDX Pro. Harman-style shape pulled toward listening preference. Coupler artifacts are left out.</figcaption></figure><figure class="x-fig"><img src="assets/Redmi12_Speaker_target.png" alt="Redmi 12 speaker raw response vs target" loading="lazy" width="1040" height="585"><figcaption>Redmi 12 speaker. Follows the driver roll-off, partial fill of the 400 to 650 Hz notch.</figcaption></figure></div>
+<ul class="x-list" style="margin-top:var(--s5)"><li><b>Trust broad shape</b> over narrow detail, especially on a single-position speaker measurement.</li><li><b>Never correct an artifact</b> such as a coupler resonance or a room effect.</li><li><b>Never boost where the device has no output.</b> The speaker has almost nothing below 100 Hz.</li></ul>
+</section>
 <section id="docs" class="sec wrap">
-<header class="sec-h"><span class="lbl">05</span><h2>Documentation</h2></header>
+<header class="sec-h"><span class="lbl">09</span><h2>Documentation</h2></header>
 <div class="folds">
 <details class="fold">
 <summary><span><b>Deployment guide</b><small>Load into RootlessJamesDSP</small></span><svg class="i chev" aria-hidden="true"><use href="#i-chev"/></svg></summary>
@@ -204,6 +262,10 @@
 <div class="fold-body">
 <p>Read the repository documents here. Each one also links to its file on GitHub.</p>
 <div class="links">
+<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/docs/system_full.md" data-doc="docs/system_full.md"><svg class="i xs" aria-hidden="true"><use href="#i-book"/></svg>System reference</a>
+<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/docs/vdc_functions.md" data-doc="docs/vdc_functions.md"><svg class="i xs" aria-hidden="true"><use href="#i-code"/></svg>VDC reference</a>
+<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/docs/irs_functions.md" data-doc="docs/irs_functions.md"><svg class="i xs" aria-hidden="true"><use href="#i-wave"/></svg>IRS functions</a>
+<a href="https://github.com/nmstudioo/HyperAudioo/blob/main/docs/eel_functions.md" data-doc="docs/eel_functions.md"><svg class="i xs" aria-hidden="true"><use href="#i-code"/></svg>EEL2 functions</a>
 <a href="https://github.com/nmstudioo/HyperAudioo/blob/main/docs/methodology.md" data-doc="docs/methodology.md"><svg class="i xs" aria-hidden="true"><use href="#i-scale"/></svg>Methodology</a>
 <a href="https://github.com/nmstudioo/HyperAudioo/blob/main/docs/test_report.md" data-doc="docs/test_report.md"><svg class="i xs" aria-hidden="true"><use href="#i-chart"/></svg>Test report</a>
 <a href="https://github.com/nmstudioo/HyperAudioo/blob/main/edx_pro/Setting_Guide_IEM.md" data-doc="edx_pro/Setting_Guide_IEM.md"><svg class="i xs" aria-hidden="true"><use href="#i-book"/></svg>IEM setup</a>
@@ -215,6 +277,20 @@
 </div>
 </details>
 </div>
+</section>
+<section id="repo" class="sec wrap">
+<header class="sec-h"><span class="lbl">10</span><h2>Integrity and licence</h2></header>
+<p class="qa-note">Verify downloads with <b>sha256sum</b>. Select a row to copy its hash. The two VDC files share one hash, so they are byte-identical identity filterbanks.</p><div class="x-hash"><button type="button" data-h="933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef"><span>Redmi_12/HA_Speaker_Master.vdc</span><code>933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef</code></button><button type="button" data-h="0ba8da0f4351aca761e3c7e39b37bccf9b61403f7d92ed60ecf1b23cda0c7de4"><span>Redmi_12/HA_Speaker_Master.irs</span><code>0ba8da0f4351aca761e3c7e39b37bccf9b61403f7d92ed60ecf1b23cda0c7de4</code></button><button type="button" data-h="e5cfbc49cb82aad8d3c45da5ca27715a9712639cb1f41aa3dce2a9677c903af4"><span>Redmi_12/HA_Speaker_Master.eel</span><code>e5cfbc49cb82aad8d3c45da5ca27715a9712639cb1f41aa3dce2a9677c903af4</code></button><button type="button" data-h="933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef"><span>edx_pro/HA_IEM_v3.vdc</span><code>933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef</code></button><button type="button" data-h="b6d751a1613b48569a6ec485f477603172dcc14b0072f0c86c93b4668363b9d5"><span>edx_pro/HA_IEM_v3.irs</span><code>b6d751a1613b48569a6ec485f477603172dcc14b0072f0c86c93b4668363b9d5</code></button><button type="button" data-h="3efa4976c3e9788faafa0225a9bcffa5944c04cb3d1bbfd5b64ce3a6d7d56b17"><span>edx_pro/HA_IEM_v3.eel</span><code>3efa4976c3e9788faafa0225a9bcffa5944c04cb3d1bbfd5b64ce3a6d7d56b17</code></button></div>
+<h3 class="x-sub">Repository layout</h3><pre class="x-code">HyperAudioo/
+├── README.md · index.html · ATTRIBUTION.md · LICENSE*
+├── Redmi_12/   VDC, IRS, EEL, BETA EEL, setting guide, report
+├── edx_pro/    VDC, IRS, EEL, setting guide, report
+├── docs/       vdc_functions, irs_functions, eel_functions,
+│               system_full, methodology, test_report
+├── assets/     logo, banner, style.css, script.js, docs.js,
+│               fonts, verification harness graphics
+└── .github/workflows/ci.yml</pre>
+<div class="x-grid two"><div class="x-tbl"><table><thead><tr><th>Scope</th><th>Licence</th></tr></thead><tbody><tr><td>EEL2 code (.eel)</td><td><a href="https://github.com/nmstudioo/HyperAudioo/blob/main/LICENSE-MIT">MIT</a></td></tr><tr><td>Audio artifacts (.irs, .vdc) and reports</td><td><a href="https://github.com/nmstudioo/HyperAudioo/blob/main/LICENSE-CC-BY-SA-4.0">CC BY-SA 4.0</a></td></tr></tbody></table></div><p class="qa-note" style="margin:0">Presets derive from AutoEq-format data (jaakkopasanen/AutoEq, MIT) via RikudouGoku's database, corroborated by Speaker Ranking. EEL2 scripts target the VM in RootlessJamesDSP (ThePBone, Apache 2.0). No third-party code or raw measurements are redistributed. See <a href="https://github.com/nmstudioo/HyperAudioo/blob/main/ATTRIBUTION.md" data-doc="ATTRIBUTION.md">ATTRIBUTION.md</a>.</p></div>
 </section>
 </main>
 <footer class="foot">
@@ -231,6 +307,8 @@
 <article class="prose" id="readerBody" tabindex="0" autofocus></article>
 </dialog>
 <script src="assets/script.js"></script>
+<script>(()=>{const t=document.getElementById('toast');document.querySelectorAll('[data-h]').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.h,s=b.firstElementChild,o=s.textContent,ok=()=>{s.textContent='Copied';setTimeout(()=>s.textContent=o,1200)};try{navigator.clipboard.writeText(v).then(ok,()=>{})}catch(e){}}))})()</script>
+
 <script src="assets/docs.js" defer></script>
 </body>
 </html>
