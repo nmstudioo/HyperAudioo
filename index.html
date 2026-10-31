@@ -36,7 +36,6 @@ document.documentElement.dataset.theme=(()=>{try{return localStorage.theme}catch
 </script>
 <link rel="stylesheet" href="assets/style.css">
 <style>
-/* == Layout == */
 .x-flow{display:grid;gap:var(--s3);margin:var(--s5) 0}
 .x-node{position:relative;padding:var(--s4);border:1px solid var(--line);border-radius:var(--r2);background:var(--bg2)}
 .x-node b{display:block;font:600 1.1rem var(--display)}.x-node small{display:block;margin-top:var(--s1);color:var(--mut);line-height:1.5}
@@ -60,9 +59,7 @@ document.documentElement.dataset.theme=(()=>{try{return localStorage.theme}catch
 .x-sub{font:600 1.1rem var(--display);margin:var(--s6) 0 var(--s3)}
 </style>
 <link rel="stylesheet" href="assets/theme.css">
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"HyperAudio","applicationCategory":"MultimediaApplication","operatingSystem":"Android (RootlessJamesDSP)","url":"https://nmstudioo.github.io/HyperAudioo/","image":"https://nmstudioo.github.io/HyperAudioo/assets/og-image.png","author":{"@type":"Person","name":"Noushad M."},"license":"https://opensource.org/licenses/MIT","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
-</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"HyperAudio","applicationCategory":"MultimediaApplication","operatingSystem":"Android (RootlessJamesDSP)","url":"https://nmstudioo.github.io/HyperAudioo/","image":"https://nmstudioo.github.io/HyperAudioo/assets/og-image.png","author":{"@type":"Person","name":"Noushad M."},"license":"https://opensource.org/licenses/MIT","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -157,7 +154,7 @@ document.documentElement.dataset.theme=(()=>{try{return localStorage.theme}catch
 <span class="pmain">
 <span class="lbl">Speaker · V6 frozen</span>
 <span class="ptitle">Redmi 12 Speaker</span>
-<span class="pdesc">Transparent post-IRS protection: a look-ahead limiter with no EQ, bass synthesis or stereo processing.</span>
+<span class="pdesc">Current setup uses standalone PEQ + limiter EEL2 script. The legacy V6 three-file chain remains frozen in the repo.</span>
 </span>
 <span class="pchain"><span>VDC identity</span><span>IRS</span><span>EEL2</span></span>
 <svg class="spark" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true"><path/></svg>
@@ -243,10 +240,30 @@ document.documentElement.dataset.theme=(()=>{try{return localStorage.theme}catch
 <header class="sec-h"><span class="lbl">08</span><h2>Raw and target curves</h2></header>
 <p class="qa-note">Each correction is fitted against a target curve, in dB relative to 1 kHz. Both targets are custom, built offline, and not published standards. Listening results outrank the curves.</p>
 <div class="x-grid two"><figure class="x-fig"><img src="assets/KZ_EDX_Pro_target.png" alt="KZ EDX Pro raw response vs target" loading="lazy" width="1040" height="585"><figcaption>KZ EDX Pro. Harman-style shape pulled toward listening preference. Coupler artifacts are left out.</figcaption></figure><figure class="x-fig"><img src="assets/Redmi12_Speaker_target.png" alt="Redmi 12 speaker raw response vs target" loading="lazy" width="1040" height="585"><figcaption>Redmi 12 speaker. Follows the driver roll-off, partial fill of the 400 to 650 Hz notch.</figcaption></figure></div>
+<p class="qa-note" style="margin-top:var(--s4)">Method and principles: <a href="https://github.com/nmstudioo/HyperAudioo/blob/main/data/methodology.md" data-doc="data/methodology.md">Raw and target curves</a>.</p>
 <ul class="x-list" style="margin-top:var(--s5)"><li><b>Trust broad shape</b> over narrow detail, especially on a single-position speaker measurement.</li><li><b>Never correct an artifact</b> such as a coupler resonance or a room effect.</li><li><b>Never boost where the device has no output.</b> The speaker has almost nothing below 100 Hz.</li></ul>
 </section>
+<section id="addons" class="sec wrap">
+<header class="sec-h"><span class="lbl">09</span><h2>Optional Add-ons</h2></header>
+<p class="qa-note"><code>addons/</code> holds two optional impulse responses and three EasyEffects reference presets. See the <a href="https://github.com/nmstudioo/HyperAudioo/blob/main/addons/effects.md" data-doc="addons/effects.md">add-on guide</a>.</p>
+<div class="x-warn">
+<b>Level Matching Warning.</b> The add-on IRS files are not level-matched to the project gates. Measured maximum gain from 20 Hz to 20 kHz: <code>BBE SonicMax.irs</code> +7.9 dB (left) and +9.8 dB (right); <code>EFOtech MLV 01024 (True Stereo, 48kHz).irs</code> +3.7 to +5.3 dB across its four channels. The project gate is 0 dB. The convolver loads one IRS at a time, so an add-on IRS replaces the tonal-correction IRS rather than adding to it. Lower the volume before trying one.
+</div>
+<div class="x-grid two">
+<article class="x-card">
+<span class="lbl">Phase & Clarity</span>
+<h3>BBE SonicMax & EFOtech</h3>
+<p>Optional impulse responses to replace the core IRS with hardware-accurate phase alignment or spatial crossfeed. Use instead of the core IRS, never alongside it.</p>
+</article>
+<article class="x-card">
+<span class="lbl">Reference Presets</span>
+<h3>EasyEffects JSONs</h3>
+<p>Reference files for Night Listening, Concert Hall, and Gentle Dynamics. These cannot be loaded directly into RootlessJamesDSP; they are for manual parameter replication.</p>
+</article>
+</div>
+</section>
 <section id="docs" class="sec wrap">
-<header class="sec-h"><span class="lbl">09</span><h2>Documentation</h2></header>
+<header class="sec-h"><span class="lbl">10</span><h2>Documentation</h2></header>
 <div class="folds">
 <details class="fold">
 <summary><span><b>Deployment guide</b><small>Load into RootlessJamesDSP</small></span><svg class="i chev" aria-hidden="true"><use href="#i-chev"/></svg></summary>
@@ -284,7 +301,7 @@ document.documentElement.dataset.theme=(()=>{try{return localStorage.theme}catch
 </div>
 </section>
 <section id="repo" class="sec wrap">
-<header class="sec-h"><span class="lbl">10</span><h2>Integrity and licence</h2></header>
+<header class="sec-h"><span class="lbl">11</span><h2>Integrity and licence</h2></header>
 <p class="qa-note">Verify downloads with <b>sha256sum</b>. Select a row to copy its hash. The two VDC files share one hash, so they are byte-identical identity filterbanks.</p><div class="x-hash"><button type="button" data-h="933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef"><span>Redmi_12/HA_Speaker_Master.vdc</span><code>933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef</code></button><button type="button" data-h="0ba8da0f4351aca761e3c7e39b37bccf9b61403f7d92ed60ecf1b23cda0c7de4"><span>Redmi_12/HA_Speaker_Master.irs</span><code>0ba8da0f4351aca761e3c7e39b37bccf9b61403f7d92ed60ecf1b23cda0c7de4</code></button><button type="button" data-h="e5cfbc49cb82aad8d3c45da5ca27715a9712639cb1f41aa3dce2a9677c903af4"><span>Redmi_12/HA_Speaker_Master.eel</span><code>e5cfbc49cb82aad8d3c45da5ca27715a9712639cb1f41aa3dce2a9677c903af4</code></button><button type="button" data-h="933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef"><span>edx_pro/HA_IEM_v3.vdc</span><code>933be0b02daead88450f2042065d0fb5a44e77099f8c29a6e37b9669e6a2d6ef</code></button><button type="button" data-h="b6d751a1613b48569a6ec485f477603172dcc14b0072f0c86c93b4668363b9d5"><span>edx_pro/HA_IEM_v3.irs</span><code>b6d751a1613b48569a6ec485f477603172dcc14b0072f0c86c93b4668363b9d5</code></button><button type="button" data-h="3efa4976c3e9788faafa0225a9bcffa5944c04cb3d1bbfd5b64ce3a6d7d56b17"><span>edx_pro/HA_IEM_v3.eel</span><code>3efa4976c3e9788faafa0225a9bcffa5944c04cb3d1bbfd5b64ce3a6d7d56b17</code></button></div>
 <h3 class="x-sub">Repository layout</h3><pre class="x-code">HyperAudioo/
 ├── README.md · index.html · ATTRIBUTION.md · LICENSE*
@@ -318,4 +335,4 @@ document.documentElement.dataset.theme=(()=>{try{return localStorage.theme}catch
 <script src="assets/docs.js" defer></script>
 <script src="assets/enhance.js" defer></script>
 </body>
-                                          </html>
+</html>
